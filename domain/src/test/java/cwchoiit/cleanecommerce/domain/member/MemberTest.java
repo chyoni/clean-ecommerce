@@ -54,6 +54,63 @@ class MemberTest {
     }
 
     @Test
+    @DisplayName("회원의 이메일을 변경한다")
+    void changeEmail() {
+        Member member = MemberFixture.register(MemberFixture.getMemberRegisterPayload());
+
+        String newEmail = "noreply2@example.com";
+        member.changeEmail(newEmail);
+
+        assertThat(member.getEmail().address()).isEqualTo(newEmail);
+    }
+
+    @Test
+    @DisplayName("회원 이메일 변경 시 NULL값을 허용하지 않는다")
+    void changeEmailFailNull() {
+        Member member = MemberFixture.register(MemberFixture.getMemberRegisterPayload());
+
+        assertThatThrownBy(() -> member.changeEmail(null)).isInstanceOf(NullPointerException.class);
+    }
+
+    @Test
+    @DisplayName("회원 이메일 변경 시 유효하지 않은 형식인 경우 오류가 발생한다")
+    void changeEmailFailInvalid() {
+        Member member = MemberFixture.register(MemberFixture.getMemberRegisterPayload());
+
+        assertThatThrownBy(() -> member.changeEmail("invalid"))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    @DisplayName("회원의 핸드폰번호를 변경한다")
+    void changePhoneNumber() {
+        Member member = MemberFixture.register(MemberFixture.getMemberRegisterPayload());
+
+        String newPhoneNumber = "010-1111-2222";
+        member.changePhoneNumber(newPhoneNumber);
+
+        assertThat(member.getPhoneNumber().value()).isEqualTo(newPhoneNumber);
+    }
+
+    @Test
+    @DisplayName("회원 핸드폰번호 변경 시 NULL값을 허용하지 않는다")
+    void changePhoneNumberFailNull() {
+        Member member = MemberFixture.register(MemberFixture.getMemberRegisterPayload());
+
+        assertThatThrownBy(() -> member.changePhoneNumber(null))
+                .isInstanceOf(NullPointerException.class);
+    }
+
+    @Test
+    @DisplayName("회원 핸드폰번호 변경 시 유효하지 않은 형식인 경우 오류가 발생한다")
+    void changePhoneNumberFailInvalid() {
+        Member member = MemberFixture.register(MemberFixture.getMemberRegisterPayload());
+
+        assertThatThrownBy(() -> member.changePhoneNumber("0101"))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
     @DisplayName("회원 유형을 변경한다")
     void changeMemberRole() {
         Member member = MemberFixture.register(MemberFixture.getMemberRegisterPayload());

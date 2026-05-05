@@ -44,10 +44,22 @@ public class Member extends BaseEntity {
         return member;
     }
 
+    public void changeEmail(String email) {
+        this.email = new Email(requireNonNull(email));
+    }
+
+    public void changePhoneNumber(String phoneNumber) {
+        this.phoneNumber = new PhoneNumber(requireNonNull(phoneNumber));
+    }
+
     public void changeMemberRole(MemberRole role) {
         validateAdminRole(role);
 
         this.role = requireNonNull(role);
+    }
+
+    public boolean isSeller() {
+        return role == MemberRole.SELLER;
     }
 
     private void validateAdminRole(MemberRole role) {

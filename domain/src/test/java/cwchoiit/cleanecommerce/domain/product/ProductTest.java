@@ -3,7 +3,11 @@ package cwchoiit.cleanecommerce.domain.product;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import cwchoiit.cleanecommerce.domain.MemberFixture;
 import cwchoiit.cleanecommerce.domain.ProductFixture;
+import cwchoiit.cleanecommerce.domain.member.Member;
+import cwchoiit.cleanecommerce.domain.member.MemberRegisterPayload;
+import cwchoiit.cleanecommerce.domain.member.MemberRole;
 import java.time.LocalDateTime;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.DisplayName;
@@ -22,6 +26,20 @@ class ProductTest {
         Product product = Product.register(payload);
 
         assertThat(product.getProductName()).isEqualTo(payload.productName());
+    }
+
+    @Test
+    @DisplayName("상품 등록 시 판매자 유형의 회원이 아닌 경우 오류가 발생한다")
+    void registerFailNotSeller() {
+        MemberRegisterPayload memberRegisterPayload =
+                MemberFixture.builder().role(MemberRole.NORMAL).build();
+        Member normalMember = MemberFixture.register(memberRegisterPayload);
+
+        ProductRegisterPayload productRegisterPayload =
+                ProductFixture.builder().seller(normalMember).build();
+
+        assertThatThrownBy(() -> Product.register(productRegisterPayload))
+                .isInstanceOf(IllegalStateException.class);
     }
 
     @Test

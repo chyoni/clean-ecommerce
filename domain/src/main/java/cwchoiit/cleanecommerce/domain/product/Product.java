@@ -43,6 +43,8 @@ public class Product extends BaseEntity {
     public static Product register(ProductRegisterPayload payload) {
         Product product = new Product();
 
+        validateSeller(payload.seller());
+
         product.seller = requireNonNull(payload.seller());
         product.category = payload.category();
         product.productName = requireNonNull(payload.productName());
@@ -90,6 +92,10 @@ public class Product extends BaseEntity {
         state(stockQuantity >= 0, "재고 수량은 0 또는 양수여야 합니다");
 
         this.stockQuantity = requireNonNull(stockQuantity);
+    }
+
+    private static void validateSeller(Member seller) {
+        state(seller.isSeller(), "상품 등록은 판매자 유형의 회원만 가능합니다");
     }
 
     private static void validateSalesDate(
