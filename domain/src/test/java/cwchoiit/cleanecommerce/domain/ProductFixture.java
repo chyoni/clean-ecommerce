@@ -3,9 +3,8 @@ package cwchoiit.cleanecommerce.domain;
 import cwchoiit.cleanecommerce.domain.product.Product;
 import cwchoiit.cleanecommerce.domain.product.ProductRegisterPayload;
 import cwchoiit.cleanecommerce.domain.product.ProductStatus;
-import org.jspecify.annotations.NonNull;
-
 import java.time.LocalDateTime;
+import org.jspecify.annotations.NonNull;
 
 public class ProductFixture {
 
@@ -85,10 +84,16 @@ public class ProductFixture {
 
         public ProductRegisterPayload build() {
             return new ProductRegisterPayload(
-                    sellerId, category, productName, status,
-                    brand, manufacturer, salesStartDate, salesEndDate,
-                    price, stockQuantity
-            );
+                    sellerId,
+                    category,
+                    productName,
+                    status,
+                    brand,
+                    manufacturer,
+                    salesStartDate,
+                    salesEndDate,
+                    price,
+                    stockQuantity);
         }
     }
 }
