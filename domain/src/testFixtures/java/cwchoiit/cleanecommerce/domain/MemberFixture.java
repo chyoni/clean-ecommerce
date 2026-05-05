@@ -4,15 +4,14 @@ import cwchoiit.cleanecommerce.domain.member.Member;
 import cwchoiit.cleanecommerce.domain.member.MemberRegisterPayload;
 import cwchoiit.cleanecommerce.domain.member.MemberRole;
 import cwchoiit.cleanecommerce.domain.member.PasswordEncoder;
-import org.jspecify.annotations.NonNull;
 
 public class MemberFixture {
 
-    public static @NonNull Member register(MemberRegisterPayload payload) {
+    public static Member register(MemberRegisterPayload payload) {
         return Member.register(payload, getFakePasswordEncoder());
     }
 
-    public static @NonNull PasswordEncoder getFakePasswordEncoder() {
+    public static PasswordEncoder getFakePasswordEncoder() {
         return new PasswordEncoder() {
             @Override
             public String encode(String rawPassword) {
@@ -26,11 +25,11 @@ public class MemberFixture {
         };
     }
 
-    public static @NonNull MemberRegisterPayload getMemberRegisterPayload() {
+    public static MemberRegisterPayload getMemberRegisterPayload() {
         return new Builder().build();
     }
 
-    public static @NonNull Builder builder() {
+    public static Builder builder() {
         return new Builder();
     }
 

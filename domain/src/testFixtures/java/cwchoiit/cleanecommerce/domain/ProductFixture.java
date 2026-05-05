@@ -5,15 +5,14 @@ import cwchoiit.cleanecommerce.domain.product.Product;
 import cwchoiit.cleanecommerce.domain.product.ProductRegisterPayload;
 import cwchoiit.cleanecommerce.domain.product.ProductStatus;
 import java.time.LocalDateTime;
-import org.jspecify.annotations.NonNull;
 
 public class ProductFixture {
 
-    public static @NonNull Product register() {
+    public static Product register() {
         return Product.register(getProductRegisterPayload());
     }
 
-    public static @NonNull ProductRegisterPayload getProductRegisterPayload() {
+    public static ProductRegisterPayload getProductRegisterPayload() {
         return builder().build();
     }
 
