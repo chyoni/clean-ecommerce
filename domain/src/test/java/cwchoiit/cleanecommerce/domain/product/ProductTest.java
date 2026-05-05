@@ -121,6 +121,15 @@ class ProductTest {
     }
 
     @Test
+    @DisplayName("가격 수정 시 NULL 값은 허용하지 않는다")
+    void changePriceFailNull() {
+        Product product = ProductFixture.register();
+
+        assertThatThrownBy(() -> product.changePrice(null))
+                .isInstanceOf(NullPointerException.class);
+    }
+
+    @Test
     @DisplayName("재고 수량을 수정한다")
     void changeStockQuantity() {
         Product product = ProductFixture.register();
@@ -137,6 +146,15 @@ class ProductTest {
 
         assertThatThrownBy(() -> product.changeStockQuantity(-20))
                 .isInstanceOf(IllegalStateException.class);
+    }
+
+    @Test
+    @DisplayName("재고 수량 수정 시 NULL 값은 허용하지 않는다")
+    void changeStockQuantityFailNull() {
+        Product product = ProductFixture.register();
+
+        assertThatThrownBy(() -> product.changeStockQuantity(null))
+                .isInstanceOf(NullPointerException.class);
     }
 
     @Test
@@ -178,9 +196,9 @@ class ProductTest {
                 .isInstanceOf(NullPointerException.class);
     }
 
-    @ParameterizedTest(name = "{1} 이 null이면 등록에 실패한다")
+    @ParameterizedTest(name = "{1} 이 NULL이면 등록에 실패한다")
     @MethodSource("nullRequiredFieldPayloads")
-    @DisplayName("필수 필드가 null이면 등록에 실패한다")
+    @DisplayName("필수 필드가 NULL이면 등록에 실패한다")
     void registerValidation(ProductRegisterPayload payload, String field) {
         assertThatThrownBy(() -> Product.register(payload))
                 .isInstanceOf(NullPointerException.class);
