@@ -10,7 +10,6 @@ dependencies {
     implementation(libs.spring.boot.webmvc)
     implementation(libs.spring.boot.data.jpa)
 
-    testImplementation(libs.spring.boot.test)
     testImplementation(libs.spring.boot.webmvc.test)
     testImplementation(libs.spring.boot.data.jpa.test)
 

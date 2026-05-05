@@ -48,6 +48,7 @@ spring-security-core = { group = "org.springframework.security", name = "spring-
 # Testing
 junit-jupiter = { group = "org.junit.jupiter", name = "junit-jupiter", version.ref = "junit" }
 junit-platform-launcher = { group = "org.junit.platform", name = "junit-platform-launcher" }
+assertj = { group = "org.assertj", name = "assertj-core" }
 mockito-core = { group = "org.mockito", name = "mockito-core", version = "5.20.0" }
 archunit = { group = "com.tngtech.archunit", name = "archunit-junit5", version = "1.4.1" }
 

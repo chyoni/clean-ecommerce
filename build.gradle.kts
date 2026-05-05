@@ -36,7 +36,9 @@ subprojects {
 
         testCompileOnly(rootProject.libs.lombok)
         testAnnotationProcessor(rootProject.libs.lombok)
-        testRuntimeOnly(rootProject.libs.junit.platform.launcher)
+        testImplementation(rootProject.libs.junit.platform.launcher)
+        testImplementation(rootProject.libs.junit.jupiter)
+        testImplementation(rootProject.libs.spring.boot.test)
     }
 
     tasks.withType<Test> {
