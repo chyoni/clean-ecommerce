@@ -37,6 +37,10 @@ subprojects {
         }
     }
 
+    val mockitoAgent = configurations.create("mockitoAgent") {
+        isTransitive = false
+    }
+
     dependencies {
         compileOnly(rootProject.libs.lombok)
         annotationProcessor(rootProject.libs.lombok)
@@ -46,6 +50,8 @@ subprojects {
         testImplementation(rootProject.libs.junit.platform.launcher)
         testImplementation(rootProject.libs.junit.jupiter)
         testImplementation(rootProject.libs.spring.boot.test)
+
+        mockitoAgent(rootProject.libs.mockito.core)
     }
 
     // Spotless lint automatically applied in compile time
@@ -69,5 +75,6 @@ subprojects {
 
     tasks.withType<Test> {
         useJUnitPlatform()
+        jvmArgs("-javaagent:${mockitoAgent.singleFile}")
     }
 }
