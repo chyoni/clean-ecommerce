@@ -25,6 +25,26 @@ class ProductTest {
     }
 
     @Test
+    @DisplayName("상품을 등록할 때 상품 상태를 받지 않으면 기본으로 AVAILABLE 상태로 설정한다")
+    void registerDefaultStatus() {
+        ProductRegisterPayload payload = ProductFixture.builder().status(null).build();
+
+        Product product = Product.register(payload);
+
+        assertThat(product.getProductStatus()).isEqualTo(ProductStatus.AVAILABLE);
+    }
+
+    @Test
+    @DisplayName("상품을 등록할 때 판매시작일을 등록하지 않으면 기본으로 현재날짜로 등록한다")
+    void registerDefaultSalesStartDate() {
+        ProductRegisterPayload payload = ProductFixture.builder().salesStartDate(null).build();
+
+        Product product = Product.register(payload);
+
+        assertThat(product.getSalesStartDate()).isNotNull();
+    }
+
+    @Test
     @DisplayName("판매 시작일을 수정한다")
     void changeSalesStartDate() {
         Product product = ProductFixture.register();
