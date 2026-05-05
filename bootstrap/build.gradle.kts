@@ -6,6 +6,7 @@ dependencies {
     implementation(project(":adapter"))
     implementation(project(":application"))
     implementation(project(":domain"))
+    implementation(project(":batch"))
 
     implementation(libs.spring.boot.webmvc)
     implementation(libs.spring.boot.data.jpa)
