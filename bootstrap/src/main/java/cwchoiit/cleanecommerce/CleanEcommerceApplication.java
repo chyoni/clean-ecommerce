@@ -1,0 +1,13 @@
+package cwchoiit.cleanecommerce;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class CleanEcommerceApplication {
+
+    public static void main(String[] args) {
+        SpringApplication.run(CleanEcommerceApplication.class, args);
+    }
+
+}

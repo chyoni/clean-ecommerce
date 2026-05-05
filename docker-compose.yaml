@@ -1,0 +1,10 @@
+services:
+  mysql:
+    image: 'mysql:8.4.9'
+    environment:
+      - 'MYSQL_DATABASE=ecommerce-batch'
+      - 'MYSQL_PASSWORD=cwchoiit'
+      - 'MYSQL_ROOT_PASSWORD=root'
+      - 'MYSQL_USER=cwchoiit'
+    ports:
+      - '3306:3306'
