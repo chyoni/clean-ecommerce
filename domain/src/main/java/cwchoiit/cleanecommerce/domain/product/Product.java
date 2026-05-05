@@ -6,6 +6,7 @@ import static java.util.Objects.requireNonNullElse;
 import static org.springframework.util.Assert.*;
 
 import cwchoiit.cleanecommerce.domain.BaseEntity;
+import cwchoiit.cleanecommerce.domain.member.Member;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import lombok.AccessLevel;
@@ -22,7 +23,10 @@ public class Product extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long productId;
 
-    private Long sellerId;
+    @JoinColumn(name = "seller_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Member seller;
+
     private String category;
     private String productName;
 
@@ -39,7 +43,7 @@ public class Product extends BaseEntity {
     public static Product register(ProductRegisterPayload payload) {
         Product product = new Product();
 
-        product.sellerId = requireNonNull(payload.sellerId());
+        product.seller = requireNonNull(payload.seller());
         product.category = payload.category();
         product.productName = requireNonNull(payload.productName());
         product.productStatus = requireNonNullElse(payload.status(), AVAILABLE);

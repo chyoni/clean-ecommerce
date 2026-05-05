@@ -1,9 +1,10 @@
 package cwchoiit.cleanecommerce.domain.product;
 
+import cwchoiit.cleanecommerce.domain.member.Member;
 import java.time.LocalDateTime;
 
 public record ProductRegisterPayload(
-        Long sellerId,
+        Member seller,
         String category,
         String productName,
         ProductStatus status,

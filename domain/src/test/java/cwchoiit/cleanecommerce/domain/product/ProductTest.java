@@ -206,7 +206,7 @@ class ProductTest {
 
     private static Stream<Arguments> nullRequiredFieldPayloads() {
         return Stream.of(
-                Arguments.of(ProductFixture.builder().sellerId(null).build(), "sellerId"),
+                Arguments.of(ProductFixture.builder().seller(null).build(), "seller"),
                 Arguments.of(ProductFixture.builder().productName(null).build(), "productName"),
                 Arguments.of(ProductFixture.builder().brand(null).build(), "brand"),
                 Arguments.of(ProductFixture.builder().manufacturer(null).build(), "manufacturer"),

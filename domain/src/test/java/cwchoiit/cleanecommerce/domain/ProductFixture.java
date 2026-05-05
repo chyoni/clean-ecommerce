@@ -1,5 +1,6 @@
 package cwchoiit.cleanecommerce.domain;
 
+import cwchoiit.cleanecommerce.domain.member.Member;
 import cwchoiit.cleanecommerce.domain.product.Product;
 import cwchoiit.cleanecommerce.domain.product.ProductRegisterPayload;
 import cwchoiit.cleanecommerce.domain.product.ProductStatus;
@@ -21,7 +22,7 @@ public class ProductFixture {
     }
 
     public static class Builder {
-        private Long sellerId = 1L;
+        private Member seller = MemberFixture.register(MemberFixture.getMemberRegisterPayload());
         private String category = "전자기기";
         private String productName = "아이폰17";
         private ProductStatus status = ProductStatus.AVAILABLE;
@@ -32,8 +33,8 @@ public class ProductFixture {
         private Integer price = 1_500_000;
         private Integer stockQuantity = 20_000_000;
 
-        public Builder sellerId(Long v) {
-            this.sellerId = v;
+        public Builder seller(Member v) {
+            this.seller = v;
             return this;
         }
 
@@ -84,7 +85,7 @@ public class ProductFixture {
 
         public ProductRegisterPayload build() {
             return new ProductRegisterPayload(
-                    sellerId,
+                    seller,
                     category,
                     productName,
                     status,
