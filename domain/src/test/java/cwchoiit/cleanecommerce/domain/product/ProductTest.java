@@ -43,13 +43,13 @@ class ProductTest {
     }
 
     @Test
-    @DisplayName("상품을 등록할 때 상품 상태를 받지 않으면 기본으로 AVAILABLE 상태로 설정한다")
+    @DisplayName("상품을 등록할 때 상품 상태를 받지 않으면 기본으로 DRAFT 상태로 설정한다")
     void registerDefaultStatus() {
         ProductRegisterPayload payload = ProductFixture.builder().status(null).build();
 
         Product product = Product.register(payload);
 
-        assertThat(product.getProductStatus()).isEqualTo(ProductStatus.AVAILABLE);
+        assertThat(product.getProductStatus()).isEqualTo(ProductStatus.DRAFT);
     }
 
     @Test
@@ -117,65 +117,6 @@ class ProductTest {
     }
 
     @Test
-    @DisplayName("가격을 수정한다")
-    void changePrice() {
-        Product product = ProductFixture.register();
-
-        Integer prevPrice = product.getPrice();
-
-        product.changePrice(2000);
-
-        assertThat(prevPrice).isNotEqualTo(product.getPrice());
-        assertThat(product.getPrice()).isEqualTo(2000);
-    }
-
-    @Test
-    @DisplayName("가격 수정 시 음수를 입력하면 오류가 발생한다")
-    void changePriceFail() {
-        Product product = ProductFixture.register();
-
-        assertThatThrownBy(() -> product.changePrice(-100))
-                .isInstanceOf(IllegalStateException.class);
-    }
-
-    @Test
-    @DisplayName("가격 수정 시 NULL 값은 허용하지 않는다")
-    void changePriceFailNull() {
-        Product product = ProductFixture.register();
-
-        assertThatThrownBy(() -> product.changePrice(null))
-                .isInstanceOf(NullPointerException.class);
-    }
-
-    @Test
-    @DisplayName("재고 수량을 수정한다")
-    void changeStockQuantity() {
-        Product product = ProductFixture.register();
-
-        product.changeStockQuantity(20);
-
-        assertThat(product.getStockQuantity()).isEqualTo(20);
-    }
-
-    @Test
-    @DisplayName("재고 수량 수정 시 음수를 입력하면 오류가 발생한다")
-    void changeStockQuantityFail() {
-        Product product = ProductFixture.register();
-
-        assertThatThrownBy(() -> product.changeStockQuantity(-20))
-                .isInstanceOf(IllegalStateException.class);
-    }
-
-    @Test
-    @DisplayName("재고 수량 수정 시 NULL 값은 허용하지 않는다")
-    void changeStockQuantityFailNull() {
-        Product product = ProductFixture.register();
-
-        assertThatThrownBy(() -> product.changeStockQuantity(null))
-                .isInstanceOf(NullPointerException.class);
-    }
-
-    @Test
     @DisplayName("상품 상태를 수정한다")
     void changeStatus() {
         Product product = ProductFixture.register();
@@ -227,9 +168,61 @@ class ProductTest {
                 Arguments.of(ProductFixture.builder().seller(null).build(), "seller"),
                 Arguments.of(ProductFixture.builder().productName(null).build(), "productName"),
                 Arguments.of(ProductFixture.builder().brand(null).build(), "brand"),
-                Arguments.of(ProductFixture.builder().manufacturer(null).build(), "manufacturer"),
-                Arguments.of(ProductFixture.builder().price(null).build(), "price"),
-                Arguments.of(
-                        ProductFixture.builder().stockQuantity(null).build(), "stockQuantity"));
+                Arguments.of(ProductFixture.builder().manufacturer(null).build(), "manufacturer"));
+    }
+
+    @Test
+    @DisplayName("SKU를 등록한다")
+    void registerSku() {
+        Product product = ProductFixture.register();
+
+        ProductSku sku = product.registerSku("DEFAULT-SKU", null, 1_500_000, 100);
+
+        assertThat(product.getSkus()).hasSize(1);
+        assertThat(sku.getSkuCode()).isEqualTo("DEFAULT-SKU");
+    }
+
+    @Test
+    @DisplayName("SKU를 제거한다")
+    void removeSku() {
+        Product product = ProductFixture.register();
+        ProductSku sku = product.registerSku("DEFAULT-SKU", null, 1_500_000, 100);
+
+        product.removeSku(sku);
+
+        assertThat(product.getSkus()).isEmpty();
+    }
+
+    @Test
+    @DisplayName("이미지를 추가한다")
+    void addImage() {
+        Product product = ProductFixture.register();
+
+        ProductImage image = product.addImage(ProductImageType.THUMBNAIL, "image/thumb.jpg", 0);
+
+        assertThat(product.getImages()).hasSize(1);
+        assertThat(image.getImageType()).isEqualTo(ProductImageType.THUMBNAIL);
+    }
+
+    @Test
+    @DisplayName("이미지를 제거한다")
+    void removeImage() {
+        Product product = ProductFixture.register();
+        ProductImage image = product.addImage(ProductImageType.THUMBNAIL, "image/thumb.jpg", 0);
+
+        product.removeImage(image);
+
+        assertThat(product.getImages()).isEmpty();
+    }
+
+    @Test
+    @DisplayName("상품 상세 HTML을 수정한다")
+    void changeDescriptionHtml() {
+        Product product = ProductFixture.register();
+        String html = "<p>상품 상세 설명</p>";
+
+        product.changeDescriptionHtml(html);
+
+        assertThat(product.getDescriptionHtml()).isEqualTo(html);
     }
 }

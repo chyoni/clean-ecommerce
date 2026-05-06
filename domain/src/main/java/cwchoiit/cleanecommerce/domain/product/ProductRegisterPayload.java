@@ -7,12 +7,12 @@ import java.time.LocalDateTime;
 
 public record ProductRegisterPayload(
         @NotNull Member seller,
-        @Size(max = 100) String category,
+        @NotNull Category category,
         @NotNull @Size(min = 1, max = 100) String productName,
+        String descriptionHtml,
         ProductStatus status,
-        @NotNull @Size(min = 200) String brand,
-        @NotNull @Size(min = 100) String manufacturer,
+        @NotNull @Size(max = 200) String brand,
+        @NotNull @Size(max = 100) String manufacturer,
         LocalDateTime salesStartDate,
         LocalDateTime salesEndDate,
-        @NotNull Integer price,
-        @NotNull Integer stockQuantity) {}
+        String attributes) {}

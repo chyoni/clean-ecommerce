@@ -1,6 +1,6 @@
 package cwchoiit.cleanecommerce.domain.product;
 
-import static cwchoiit.cleanecommerce.domain.product.ProductStatus.AVAILABLE;
+import static cwchoiit.cleanecommerce.domain.product.ProductStatus.DRAFT;
 import static java.util.Objects.requireNonNull;
 import static java.util.Objects.requireNonNullElse;
 import static org.springframework.util.Assert.*;
@@ -9,6 +9,8 @@ import cwchoiit.cleanecommerce.domain.BaseEntity;
 import cwchoiit.cleanecommerce.domain.member.Member;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,8 +29,12 @@ public class Product extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     private Member seller;
 
-    private String category;
+    @JoinColumn(name = "category_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Category category;
+
     private String productName;
+    private String descriptionHtml;
 
     @Enumerated(EnumType.STRING)
     private ProductStatus productStatus;
@@ -37,29 +43,55 @@ public class Product extends BaseEntity {
     private String manufacturer;
     private LocalDateTime salesStartDate;
     private LocalDateTime salesEndDate;
-    private Integer price;
-    private Integer stockQuantity;
+
+    private String attributes;
+
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ProductSku> skus = new ArrayList<>();
+
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ProductImage> images = new ArrayList<>();
 
     public static Product register(ProductRegisterPayload payload) {
         Product product = new Product();
 
         validateSeller(payload.seller());
+        validateSalesDate(payload.salesStartDate(), payload.salesEndDate());
 
         product.seller = requireNonNull(payload.seller());
-        product.category = payload.category();
+        product.category = requireNonNull(payload.category());
         product.productName = requireNonNull(payload.productName());
-        product.productStatus = requireNonNullElse(payload.status(), AVAILABLE);
         product.brand = requireNonNull(payload.brand());
         product.manufacturer = requireNonNull(payload.manufacturer());
 
-        validateSalesDate(payload.salesStartDate(), payload.salesEndDate());
+        product.descriptionHtml = payload.descriptionHtml();
+        product.salesEndDate = payload.salesEndDate();
+        product.attributes = payload.attributes();
 
         product.salesStartDate = requireNonNullElse(payload.salesStartDate(), LocalDateTime.now());
-        product.salesEndDate = payload.salesEndDate();
-        product.price = requireNonNull(payload.price());
-        product.stockQuantity = requireNonNull(payload.stockQuantity());
+        product.productStatus = requireNonNullElse(payload.status(), DRAFT);
 
         return product;
+    }
+
+    public ProductSku registerSku(String skuCode, String options, int price, int stockQuantity) {
+        ProductSku sku = ProductSku.create(this, skuCode, options, price, stockQuantity);
+        skus.add(sku);
+        return sku;
+    }
+
+    public void removeSku(ProductSku sku) {
+        skus.remove(requireNonNull(sku));
+    }
+
+    public ProductImage addImage(ProductImageType type, String path, int order) {
+        ProductImage image = ProductImage.create(this, type, path, order);
+        images.add(image);
+        return image;
+    }
+
+    public void removeImage(ProductImage image) {
+        images.remove(requireNonNull(image));
     }
 
     public void changeProductName(String productName) {
@@ -68,6 +100,10 @@ public class Product extends BaseEntity {
 
     public void changeProductStatus(ProductStatus status) {
         this.productStatus = requireNonNull(status);
+    }
+
+    public void changeDescriptionHtml(String descriptionHtml) {
+        this.descriptionHtml = descriptionHtml;
     }
 
     public void changeSalesStartDate(LocalDateTime salesStartDate) {
@@ -80,18 +116,6 @@ public class Product extends BaseEntity {
         validateSalesDate(this.salesStartDate, salesEndDate);
 
         this.salesEndDate = salesEndDate;
-    }
-
-    public void changePrice(Integer price) {
-        state(price >= 0, "가격은 0원 또는 0원보다 커야 합니다");
-
-        this.price = requireNonNull(price);
-    }
-
-    public void changeStockQuantity(Integer stockQuantity) {
-        state(stockQuantity >= 0, "재고 수량은 0 또는 양수여야 합니다");
-
-        this.stockQuantity = requireNonNull(stockQuantity);
     }
 
     private static void validateSeller(Member seller) {
