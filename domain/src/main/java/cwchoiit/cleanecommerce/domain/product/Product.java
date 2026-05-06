@@ -7,10 +7,13 @@ import static org.springframework.util.Assert.*;
 
 import cwchoiit.cleanecommerce.domain.BaseEntity;
 import cwchoiit.cleanecommerce.domain.member.Member;
+import cwchoiit.cleanecommerce.domain.product.category.Category;
+import cwchoiit.cleanecommerce.domain.product.schema.ProductAttributeSchema;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,6 +24,7 @@ import lombok.ToString;
 @ToString
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Product extends BaseEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long productId;
@@ -44,7 +48,9 @@ public class Product extends BaseEntity {
     private LocalDateTime salesStartDate;
     private LocalDateTime salesEndDate;
 
-    private String attributes;
+    @Convert(converter = JsonAttributeConverter.class)
+    @Column(columnDefinition = "json")
+    private Map<String, Object> attributes;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProductSku> skus = new ArrayList<>();
@@ -52,14 +58,15 @@ public class Product extends BaseEntity {
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProductImage> images = new ArrayList<>();
 
-    public static Product register(ProductRegisterPayload payload) {
+    public static Product register(
+            ProductRegisterPayload payload, Member seller, Category category) {
         Product product = new Product();
 
-        validateSeller(payload.seller());
+        validateSeller(seller);
         validateSalesDate(payload.salesStartDate(), payload.salesEndDate());
 
-        product.seller = requireNonNull(payload.seller());
-        product.category = requireNonNull(payload.category());
+        product.seller = requireNonNull(seller);
+        product.category = requireNonNull(category);
         product.productName = requireNonNull(payload.productName());
         product.brand = requireNonNull(payload.brand());
         product.manufacturer = requireNonNull(payload.manufacturer());
@@ -99,22 +106,31 @@ public class Product extends BaseEntity {
     }
 
     public void changeProductStatus(ProductStatus status) {
-        this.productStatus = requireNonNull(status);
+        requireNonNull(status);
+        state(
+                productStatus.canTransitionTo(status),
+                "잘못된 상태 전이: " + productStatus + " -> " + status);
+        this.productStatus = status;
     }
 
     public void changeDescriptionHtml(String descriptionHtml) {
         this.descriptionHtml = descriptionHtml;
     }
 
+    public void changeAttributes(Map<String, Object> attributes, ProductAttributeSchema schema) {
+        if (schema != null) {
+            schema.validate(attributes);
+        }
+        this.attributes = attributes;
+    }
+
     public void changeSalesStartDate(LocalDateTime salesStartDate) {
         validateSalesDate(salesStartDate, this.salesEndDate);
-
         this.salesStartDate = requireNonNull(salesStartDate);
     }
 
     public void changeSalesEndDate(LocalDateTime salesEndDate) {
         validateSalesDate(this.salesStartDate, salesEndDate);
-
         this.salesEndDate = salesEndDate;
     }
 

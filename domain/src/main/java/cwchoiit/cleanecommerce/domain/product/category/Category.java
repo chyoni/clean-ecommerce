@@ -1,4 +1,4 @@
-package cwchoiit.cleanecommerce.domain.product;
+package cwchoiit.cleanecommerce.domain.product.category;
 
 import static java.util.Objects.requireNonNull;
 
@@ -14,6 +14,7 @@ import lombok.ToString;
 @ToString
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Category extends BaseEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long categoryId;
@@ -26,10 +27,8 @@ public class Category extends BaseEntity {
 
     public static Category create(String name, Category parentCategory) {
         Category category = new Category();
-
         category.name = requireNonNull(name);
         category.parent = parentCategory;
-
         return category;
     }
 }

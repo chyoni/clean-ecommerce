@@ -61,8 +61,7 @@ class ProductSkuTest {
     void changePriceFail() {
         ProductSku sku = defaultSku();
 
-        assertThatThrownBy(() -> sku.changePrice(-1))
-                .isInstanceOf(IllegalStateException.class);
+        assertThatThrownBy(() -> sku.changePrice(-1)).isInstanceOf(IllegalStateException.class);
     }
 
     @Test
@@ -80,8 +79,7 @@ class ProductSkuTest {
     void decreaseStockFail() {
         ProductSku sku = defaultSku();
 
-        assertThatThrownBy(() -> sku.decreaseStock(200))
-                .isInstanceOf(IllegalStateException.class);
+        assertThatThrownBy(() -> sku.decreaseStock(200)).isInstanceOf(IllegalStateException.class);
     }
 
     @Test
@@ -89,8 +87,7 @@ class ProductSkuTest {
     void decreaseStockFailZero() {
         ProductSku sku = defaultSku();
 
-        assertThatThrownBy(() -> sku.decreaseStock(0))
-                .isInstanceOf(IllegalStateException.class);
+        assertThatThrownBy(() -> sku.decreaseStock(0)).isInstanceOf(IllegalStateException.class);
     }
 
     @Test
@@ -108,8 +105,7 @@ class ProductSkuTest {
     void increaseStockFailZero() {
         ProductSku sku = defaultSku();
 
-        assertThatThrownBy(() -> sku.increaseStock(0))
-                .isInstanceOf(IllegalStateException.class);
+        assertThatThrownBy(() -> sku.increaseStock(0)).isInstanceOf(IllegalStateException.class);
     }
 
     @Test

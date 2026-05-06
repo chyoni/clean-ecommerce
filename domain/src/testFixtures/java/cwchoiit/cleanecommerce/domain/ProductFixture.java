@@ -1,16 +1,20 @@
 package cwchoiit.cleanecommerce.domain;
 
 import cwchoiit.cleanecommerce.domain.member.Member;
-import cwchoiit.cleanecommerce.domain.product.Category;
 import cwchoiit.cleanecommerce.domain.product.Product;
 import cwchoiit.cleanecommerce.domain.product.ProductRegisterPayload;
 import cwchoiit.cleanecommerce.domain.product.ProductStatus;
+import cwchoiit.cleanecommerce.domain.product.category.Category;
 import java.time.LocalDateTime;
+import java.util.Map;
 
 public class ProductFixture {
 
     public static Product register() {
-        return Product.register(getProductRegisterPayload());
+        ProductRegisterPayload payload = getProductRegisterPayload();
+        Member seller = MemberFixture.register(MemberFixture.getMemberRegisterPayload());
+        Category category = CategoryFixture.registerWithId(1L);
+        return Product.register(payload, seller, category);
     }
 
     public static Product registerWithDefaultSku() {
@@ -28,8 +32,8 @@ public class ProductFixture {
     }
 
     public static class Builder {
-        private Member seller = MemberFixture.register(MemberFixture.getMemberRegisterPayload());
-        private Category category = CategoryFixture.register();
+        private Long sellerId = 1L;
+        private Long categoryId = 1L;
         private String productName = "아이폰17";
         private String descriptionHtml = null;
         private ProductStatus status = ProductStatus.AVAILABLE;
@@ -37,15 +41,15 @@ public class ProductFixture {
         private String manufacturer = "apple";
         private LocalDateTime salesStartDate = LocalDateTime.now();
         private LocalDateTime salesEndDate = null;
-        private String attributes = "{ \"screen_size\": 6.2, \"storage\": 256 }";
+        private Map<String, Object> attributes = Map.of("screen_size", 6.2, "storage", 256);
 
-        public Builder seller(Member v) {
-            this.seller = v;
+        public Builder sellerId(Long v) {
+            this.sellerId = v;
             return this;
         }
 
-        public Builder category(Category v) {
-            this.category = v;
+        public Builder categoryId(Long v) {
+            this.categoryId = v;
             return this;
         }
 
@@ -84,15 +88,15 @@ public class ProductFixture {
             return this;
         }
 
-        public Builder attributes(String v) {
+        public Builder attributes(Map<String, Object> v) {
             this.attributes = v;
             return this;
         }
 
         public ProductRegisterPayload build() {
             return new ProductRegisterPayload(
-                    seller,
-                    category,
+                    sellerId,
+                    categoryId,
                     productName,
                     descriptionHtml,
                     status,

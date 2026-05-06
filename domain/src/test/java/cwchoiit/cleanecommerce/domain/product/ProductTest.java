@@ -3,13 +3,16 @@ package cwchoiit.cleanecommerce.domain.product;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import cwchoiit.cleanecommerce.domain.CategoryFixture;
 import cwchoiit.cleanecommerce.domain.MemberFixture;
 import cwchoiit.cleanecommerce.domain.ProductFixture;
 import cwchoiit.cleanecommerce.domain.member.Member;
 import cwchoiit.cleanecommerce.domain.member.MemberRegisterPayload;
 import cwchoiit.cleanecommerce.domain.member.MemberRole;
+import cwchoiit.cleanecommerce.domain.product.category.Category;
 import java.time.LocalDateTime;
 import java.util.stream.Stream;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -18,12 +21,21 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 class ProductTest {
 
+    Member defaultSeller;
+    Category defaultCategory;
+
+    @BeforeEach
+    void setUp() {
+        defaultSeller = MemberFixture.register(MemberFixture.getMemberRegisterPayload());
+        defaultCategory = CategoryFixture.registerWithId(1L);
+    }
+
     @Test
     @DisplayName("상품을 정상 등록한다")
     void register() {
         ProductRegisterPayload payload = ProductFixture.getProductRegisterPayload();
 
-        Product product = Product.register(payload);
+        Product product = Product.register(payload, defaultSeller, defaultCategory);
 
         assertThat(product.getProductName()).isEqualTo(payload.productName());
     }
@@ -35,11 +47,19 @@ class ProductTest {
                 MemberFixture.builder().role(MemberRole.NORMAL).build();
         Member normalMember = MemberFixture.register(memberRegisterPayload);
 
-        ProductRegisterPayload productRegisterPayload =
-                ProductFixture.builder().seller(normalMember).build();
+        ProductRegisterPayload payload = ProductFixture.getProductRegisterPayload();
 
-        assertThatThrownBy(() -> Product.register(productRegisterPayload))
+        assertThatThrownBy(() -> Product.register(payload, normalMember, defaultCategory))
                 .isInstanceOf(IllegalStateException.class);
+    }
+
+    @Test
+    @DisplayName("seller가 NULL이면 등록에 실패한다")
+    void registerFailNullSeller() {
+        ProductRegisterPayload payload = ProductFixture.getProductRegisterPayload();
+
+        assertThatThrownBy(() -> Product.register(payload, null, defaultCategory))
+                .isInstanceOf(NullPointerException.class);
     }
 
     @Test
@@ -47,7 +67,7 @@ class ProductTest {
     void registerDefaultStatus() {
         ProductRegisterPayload payload = ProductFixture.builder().status(null).build();
 
-        Product product = Product.register(payload);
+        Product product = Product.register(payload, defaultSeller, defaultCategory);
 
         assertThat(product.getProductStatus()).isEqualTo(ProductStatus.DRAFT);
     }
@@ -57,7 +77,7 @@ class ProductTest {
     void registerDefaultSalesStartDate() {
         ProductRegisterPayload payload = ProductFixture.builder().salesStartDate(null).build();
 
-        Product product = Product.register(payload);
+        Product product = Product.register(payload, defaultSeller, defaultCategory);
 
         assertThat(product.getSalesStartDate()).isNotNull();
     }
@@ -83,7 +103,7 @@ class ProductTest {
                         .salesEndDate(LocalDateTime.now().plusDays(1))
                         .build();
 
-        Product product = Product.register(payload);
+        Product product = Product.register(payload, defaultSeller, defaultCategory);
 
         assertThatThrownBy(() -> product.changeSalesStartDate(LocalDateTime.now().plusDays(2)))
                 .isInstanceOf(IllegalStateException.class);
@@ -110,29 +130,41 @@ class ProductTest {
                         .salesEndDate(LocalDateTime.now().plusDays(1))
                         .build();
 
-        Product product = Product.register(payload);
+        Product product = Product.register(payload, defaultSeller, defaultCategory);
 
         assertThatThrownBy(() -> product.changeSalesEndDate(LocalDateTime.now().minusDays(2)))
                 .isInstanceOf(IllegalStateException.class);
     }
 
     @Test
-    @DisplayName("상품 상태를 수정한다")
+    @DisplayName("상품 상태를 허용된 전이로 수정한다")
     void changeStatus() {
         Product product = ProductFixture.register();
+        // Fixture default: AVAILABLE → OUT_OF_STOCK 은 허용된 전이
+        product.changeProductStatus(ProductStatus.OUT_OF_STOCK);
 
-        product.changeProductStatus(ProductStatus.DISCONTINUED);
-
-        assertThat(product.getProductStatus()).isEqualTo(ProductStatus.DISCONTINUED);
+        assertThat(product.getProductStatus()).isEqualTo(ProductStatus.OUT_OF_STOCK);
     }
 
     @Test
-    @DisplayName("상품 상태를 수정 시 NULL을 허용하지 않는다")
-    void changeStatusFail() {
+    @DisplayName("상품 상태 수정 시 NULL을 허용하지 않는다")
+    void changeStatusFailNull() {
         Product product = ProductFixture.register();
 
         assertThatThrownBy(() -> product.changeProductStatus(null))
                 .isInstanceOf(NullPointerException.class);
+    }
+
+    @Test
+    @DisplayName("허용되지 않는 상태 전이 시 예외가 발생한다")
+    void changeStatusFailInvalidTransition() {
+        ProductRegisterPayload payload =
+                ProductFixture.builder().status(ProductStatus.DRAFT).build();
+        Product draftProduct = Product.register(payload, defaultSeller, defaultCategory);
+
+        // DRAFT → AVAILABLE 은 허용되지 않음
+        assertThatThrownBy(() -> draftProduct.changeProductStatus(ProductStatus.AVAILABLE))
+                .isInstanceOf(IllegalStateException.class);
     }
 
     @Test
@@ -159,13 +191,12 @@ class ProductTest {
     @MethodSource("nullRequiredFieldPayloads")
     @DisplayName("필수 필드가 NULL이면 등록에 실패한다")
     void registerValidation(ProductRegisterPayload payload, String field) {
-        assertThatThrownBy(() -> Product.register(payload))
+        assertThatThrownBy(() -> Product.register(payload, defaultSeller, defaultCategory))
                 .isInstanceOf(NullPointerException.class);
     }
 
     private static Stream<Arguments> nullRequiredFieldPayloads() {
         return Stream.of(
-                Arguments.of(ProductFixture.builder().seller(null).build(), "seller"),
                 Arguments.of(ProductFixture.builder().productName(null).build(), "productName"),
                 Arguments.of(ProductFixture.builder().brand(null).build(), "brand"),
                 Arguments.of(ProductFixture.builder().manufacturer(null).build(), "manufacturer"));
