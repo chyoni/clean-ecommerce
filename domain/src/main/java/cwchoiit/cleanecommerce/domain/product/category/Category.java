@@ -12,6 +12,7 @@ import lombok.ToString;
 @Entity
 @Getter
 @ToString
+@Table(name = "category")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Category extends BaseEntity {
 

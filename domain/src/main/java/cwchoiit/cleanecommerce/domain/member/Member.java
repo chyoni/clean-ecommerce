@@ -16,6 +16,7 @@ import lombok.ToString;
 @Entity
 @Getter
 @ToString
+@Table(name = "member")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Member extends BaseEntity {
     @Id

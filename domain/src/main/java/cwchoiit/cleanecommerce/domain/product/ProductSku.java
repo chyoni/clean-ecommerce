@@ -13,6 +13,7 @@ import lombok.ToString;
 
 @Entity
 @Getter
+@Table(name = "product_sku")
 @ToString(exclude = "product")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ProductSku extends BaseEntity {

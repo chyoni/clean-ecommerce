@@ -15,6 +15,7 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
+@Table(name = "product_attribute_schema")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ProductAttributeSchema extends BaseEntity {
 

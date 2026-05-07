@@ -22,6 +22,7 @@ import lombok.ToString;
 @Entity
 @Getter
 @ToString
+@Table(name = "product")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Product extends BaseEntity {
 
@@ -87,7 +88,15 @@ public class Product extends BaseEntity {
 
         if (payload.images() != null) {
             payload.images()
-                    .forEach(i -> product.addImage(i.imageType(), i.imagePath(), i.displayOrder()));
+                    .forEach(
+                            i ->
+                                    product.addImage(
+                                            i.imageType(),
+                                            i.imagePath(),
+                                            i.storageKey(),
+                                            i.mimeType(),
+                                            i.fileSize(),
+                                            i.displayOrder()));
         }
 
         return product;
@@ -108,8 +117,15 @@ public class Product extends BaseEntity {
         skus.remove(requireNonNull(sku));
     }
 
-    public ProductImage addImage(ProductImageType type, String path, int order) {
-        ProductImage image = ProductImage.create(this, type, path, order);
+    public ProductImage addImage(
+            ProductImageType type,
+            String imagePath,
+            String storageKey,
+            String mimeType,
+            Long fileSize,
+            int order) {
+        ProductImage image =
+                ProductImage.create(this, type, imagePath, storageKey, mimeType, fileSize, order);
         images.add(image);
         return image;
     }
