@@ -240,7 +240,8 @@ class ProductTest {
         Product product = Product.register(payload, defaultSeller, defaultCategory);
 
         assertThat(product.getImages()).hasSize(1);
-        assertThat(product.getImages().getFirst().getImageType()).isEqualTo(ProductImageType.THUMBNAIL);
+        assertThat(product.getImages().getFirst().getImageType())
+                .isEqualTo(ProductImageType.THUMBNAIL);
         assertThat(product.getImages().getFirst().getStorageKey())
                 .isEqualTo("products/thumbnail/2026/05/uuid.jpg");
     }
