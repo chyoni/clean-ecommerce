@@ -27,6 +27,10 @@
 - 필요할 때 다음 파일을 참고한다: [스키마 정의](bootstrap/src/main/resources/schema.sql)
   - 완성된 상태가 아닐 수 있다.
 
+## 작업 완료 리스트 및 작업할 리스트
+
+- 필요할 때 다음 파일을 참고한다: [작업 내역 리스트](docs/project-status.md)
+
 ## 절대적으로 지켜야 하는 내용
 
 - **의존성 방향은 바깥에서 안쪽으로 향한다**: Adapter/Infrastructure → Application → Domain
