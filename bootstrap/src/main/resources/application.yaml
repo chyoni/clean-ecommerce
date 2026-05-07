@@ -16,6 +16,23 @@ spring:
       username: ${DB_USERNAME}
       password: ${DB_PASSWORD}
 
+app:
+  storage:
+    image:
+      endpoint: ${STORAGE_ENDPOINT} # MinIO/R2/S3 서버 주소
+      region: ${STORAGE_REGION:us-east-1} # 스토리지 리전 (MinIO는 리전 개념이 없지만 SDK가 필수로 요구해서 더미값을 넣음)
+      bucket: ${STORAGE_BUCKET} # 파일이 저장되는 버킷 이름
+      access-key: ${STORAGE_ACCESS_KEY} # 스토리지 인증 자격증명
+      secret-key: ${STORAGE_SECRET_KEY} # 스토리지 인증 자격증명
+      force-path-style: true # MinIO 필수 설정. 기본값(false)이면 bucket.localhost:9000/... 형식의 URL을 쓰는데, MinIO는 이걸 지원 안 함. true로 해야 localhost:9000/bucket/... 형식으로 동작.
+      presign-expiry: PT5M # Presigned URL 유효 시간. PT5M = 5분. 5분안에 업로드 안하면 URL 만료
+      public-url-base: ${STORAGE_PUBLIC_URL_BASE} # 파일 다운로드 URL 의 앞부분. 예: https://cdn.example.com 이면 파일 URL이 https://cdn.example.com/product-images/products/thumbnail/.../uuid.jpg 가 됨. CDN 붙이면 여기만 바꾸면 됨.
+      max-upload-bytes: 10485760 # 업로드 허용 최대 파일 크기. 10MB
+      allowed-content-types:
+        - image/jpeg
+        - image/png
+        - image/webp
+
 ---
 spring:
   config:
@@ -28,6 +45,3 @@ spring:
     properties:
       hibernate:
         format_sql: true
-  sql:
-    init:
-      mode: always

@@ -11,6 +11,7 @@ import lombok.ToString;
 
 @Entity
 @Getter
+@Table(name = "product_image")
 @ToString(exclude = "product")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ProductImage extends BaseEntity {
@@ -26,14 +27,27 @@ public class ProductImage extends BaseEntity {
     private ProductImageType imageType;
 
     private String imagePath;
+    private String storageKey;
+    private String mimeType;
+    private Long fileSize;
     private Integer displayOrder;
 
-    static ProductImage create(Product product, ProductImageType type, String path, int order) {
+    static ProductImage create(
+            Product product,
+            ProductImageType type,
+            String imagePath,
+            String storageKey,
+            String mimeType,
+            Long fileSize,
+            int order) {
         ProductImage image = new ProductImage();
 
         image.product = requireNonNull(product);
         image.imageType = requireNonNull(type);
-        image.imagePath = requireNonNull(path);
+        image.imagePath = requireNonNull(imagePath);
+        image.storageKey = requireNonNull(storageKey);
+        image.mimeType = requireNonNull(mimeType);
+        image.fileSize = requireNonNull(fileSize);
         image.displayOrder = order;
 
         return image;
