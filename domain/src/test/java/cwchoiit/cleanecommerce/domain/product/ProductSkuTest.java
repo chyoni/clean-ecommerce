@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import cwchoiit.cleanecommerce.domain.ProductFixture;
+import java.util.Map;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -19,13 +20,13 @@ class ProductSkuTest {
     void registerSku() {
         Product product = ProductFixture.register();
 
-        ProductSku sku = product.registerSku("SKU-001", "{\"color\":\"RED\"}", 10_000, 100);
+        ProductSku sku = product.registerSku("SKU-001", Map.of("color", "RED"), 10_000, 100);
 
         assertThat(sku.getSkuCode()).isEqualTo("SKU-001");
         assertThat(sku.getPrice()).isEqualTo(10_000);
         assertThat(sku.getStockQuantity()).isEqualTo(100);
         assertThat(sku.isActive()).isTrue();
-        assertThat(product.getSkus()).hasSize(1);
+        assertThat(product.getSkus()).hasSize(2); // fixture default SKU 1개 + 추가 1개
     }
 
     @Test

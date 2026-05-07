@@ -1,11 +1,14 @@
 package cwchoiit.cleanecommerce.domain;
 
 import cwchoiit.cleanecommerce.domain.member.Member;
+import cwchoiit.cleanecommerce.domain.product.ImagePayload;
 import cwchoiit.cleanecommerce.domain.product.Product;
 import cwchoiit.cleanecommerce.domain.product.ProductRegisterPayload;
 import cwchoiit.cleanecommerce.domain.product.ProductStatus;
+import cwchoiit.cleanecommerce.domain.product.SkuPayload;
 import cwchoiit.cleanecommerce.domain.product.category.Category;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
 
 public class ProductFixture {
@@ -15,12 +18,6 @@ public class ProductFixture {
         Member seller = MemberFixture.register(MemberFixture.getMemberRegisterPayload());
         Category category = CategoryFixture.registerWithId(1L);
         return Product.register(payload, seller, category);
-    }
-
-    public static Product registerWithDefaultSku() {
-        Product product = register();
-        product.registerSku("DEFAULT-SKU", null, 1_500_000, 20_000_000);
-        return product;
     }
 
     public static ProductRegisterPayload getProductRegisterPayload() {
@@ -42,6 +39,9 @@ public class ProductFixture {
         private LocalDateTime salesStartDate = LocalDateTime.now();
         private LocalDateTime salesEndDate = null;
         private Map<String, Object> attributes = Map.of("screen_size", 6.2, "storage", 256);
+        private List<SkuPayload> skus = List.of(
+                new SkuPayload("DEFAULT-SKU", null, 1_500_000, 20_000_000));
+        private List<ImagePayload> images = null;
 
         public Builder sellerId(Long v) {
             this.sellerId = v;
@@ -93,6 +93,16 @@ public class ProductFixture {
             return this;
         }
 
+        public Builder skus(List<SkuPayload> v) {
+            this.skus = v;
+            return this;
+        }
+
+        public Builder images(List<ImagePayload> v) {
+            this.images = v;
+            return this;
+        }
+
         public ProductRegisterPayload build() {
             return new ProductRegisterPayload(
                     sellerId,
@@ -104,7 +114,9 @@ public class ProductFixture {
                     manufacturer,
                     salesStartDate,
                     salesEndDate,
-                    attributes);
+                    attributes,
+                    skus,
+                    images);
         }
     }
 }

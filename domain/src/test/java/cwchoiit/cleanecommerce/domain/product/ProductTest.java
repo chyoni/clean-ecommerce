@@ -11,6 +11,8 @@ import cwchoiit.cleanecommerce.domain.member.MemberRegisterPayload;
 import cwchoiit.cleanecommerce.domain.member.MemberRole;
 import cwchoiit.cleanecommerce.domain.product.category.Category;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -203,25 +205,64 @@ class ProductTest {
     }
 
     @Test
+    @DisplayName("상품 등록 시 payload 의 SKU 가 함께 저장된다")
+    void registerWithSkusFromPayload() {
+        ProductRegisterPayload payload = ProductFixture.builder()
+                .skus(List.of(
+                        new SkuPayload("SKU-A", null, 1_000_000, 10),
+                        new SkuPayload("SKU-B", Map.of("color", "RED"), 1_200_000, 5)))
+                .build();
+
+        Product product = Product.register(payload, defaultSeller, defaultCategory);
+
+        assertThat(product.getSkus()).hasSize(2);
+    }
+
+    @Test
+    @DisplayName("상품 등록 시 payload 의 이미지가 함께 저장된다")
+    void registerWithImagesFromPayload() {
+        ProductRegisterPayload payload = ProductFixture.builder()
+                .images(List.of(
+                        new ImagePayload(ProductImageType.THUMBNAIL, "images/thumb.jpg", 0)))
+                .build();
+
+        Product product = Product.register(payload, defaultSeller, defaultCategory);
+
+        assertThat(product.getImages()).hasSize(1);
+        assertThat(product.getImages().get(0).getImageType()).isEqualTo(ProductImageType.THUMBNAIL);
+    }
+
+    @Test
+    @DisplayName("상품 등록 시 SKU 가 비어있으면 예외가 발생한다")
+    void registerFailEmptySkus() {
+        ProductRegisterPayload payload = ProductFixture.builder()
+                .skus(List.of())
+                .build();
+
+        assertThatThrownBy(() -> Product.register(payload, defaultSeller, defaultCategory))
+                .isInstanceOf(IllegalStateException.class);
+    }
+
+    @Test
     @DisplayName("SKU를 등록한다")
     void registerSku() {
         Product product = ProductFixture.register();
 
-        ProductSku sku = product.registerSku("DEFAULT-SKU", null, 1_500_000, 100);
+        ProductSku sku = product.registerSku("SKU-NEW", null, 1_500_000, 100);
 
-        assertThat(product.getSkus()).hasSize(1);
-        assertThat(sku.getSkuCode()).isEqualTo("DEFAULT-SKU");
+        assertThat(product.getSkus()).hasSize(2); // fixture default SKU 1개 + 추가 1개
+        assertThat(sku.getSkuCode()).isEqualTo("SKU-NEW");
     }
 
     @Test
     @DisplayName("SKU를 제거한다")
     void removeSku() {
         Product product = ProductFixture.register();
-        ProductSku sku = product.registerSku("DEFAULT-SKU", null, 1_500_000, 100);
+        ProductSku sku = product.registerSku("SKU-NEW", null, 1_500_000, 100);
 
         product.removeSku(sku);
 
-        assertThat(product.getSkus()).isEmpty();
+        assertThat(product.getSkus()).hasSize(1); // fixture default SKU만 남음
     }
 
     @Test

@@ -62,6 +62,7 @@ public class Product extends BaseEntity {
             ProductRegisterPayload payload, Member seller, Category category) {
         Product product = new Product();
 
+        state(payload.skus() != null && !payload.skus().isEmpty(), "상품은 최소 1개의 SKU를 가져야 합니다");
         validateSeller(seller);
         validateSalesDate(payload.salesStartDate(), payload.salesEndDate());
 
@@ -78,10 +79,18 @@ public class Product extends BaseEntity {
         product.salesStartDate = requireNonNullElse(payload.salesStartDate(), LocalDateTime.now());
         product.productStatus = requireNonNullElse(payload.status(), DRAFT);
 
+        payload.skus().forEach(s ->
+                product.registerSku(s.skuCode(), s.options(), s.price(), s.stockQuantity()));
+
+        if (payload.images() != null) {
+            payload.images().forEach(i ->
+                    product.addImage(i.imageType(), i.imagePath(), i.displayOrder()));
+        }
+
         return product;
     }
 
-    public ProductSku registerSku(String skuCode, String options, int price, int stockQuantity) {
+    public ProductSku registerSku(String skuCode, Map<String, Object> options, int price, int stockQuantity) {
         ProductSku sku = ProductSku.create(this, skuCode, options, price, stockQuantity);
         skus.add(sku);
         return sku;

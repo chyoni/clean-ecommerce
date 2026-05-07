@@ -5,6 +5,7 @@ import static org.springframework.util.Assert.state;
 
 import cwchoiit.cleanecommerce.domain.BaseEntity;
 import jakarta.persistence.*;
+import java.util.Map;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -26,13 +27,16 @@ public class ProductSku extends BaseEntity {
     /** 예) SHIRT-RED-S, SHIRT-RED-L, ... */
     private String skuCode;
 
-    private String options;
+    @Convert(converter = JsonAttributeConverter.class)
+    @Column(columnDefinition = "json")
+    private Map<String, Object> options;
+
     private Integer price;
     private Integer stockQuantity;
     private boolean active;
 
     static ProductSku create(
-            Product product, String skuCode, String options, int price, int stockQuantity) {
+            Product product, String skuCode, Map<String, Object> options, int price, int stockQuantity) {
         ProductSku sku = new ProductSku();
 
         state(price >= 0, "가격은 0원 또는 0원보다 커야 합니다");
