@@ -101,13 +101,17 @@ create table if not exists product_image
     image_id      bigint       not null primary key auto_increment comment '이미지 ID',
     product_id    bigint       not null comment '상품 ID',
     image_type    varchar(20)  not null comment '이미지 유형 (THUMBNAIL/DETAIL/OPTION)',
-    image_path    varchar(500) not null comment '이미지 경로',
+    image_path    varchar(500) not null comment '외부 노출 URL (CDN 도메인 기준)',
+    storage_key   varchar(300) not null comment '스토리지 객체 키 (변경 불가)',
+    mime_type     varchar(100) not null comment 'MIME 타입',
+    file_size     bigint       not null comment '파일 크기 (바이트)',
     display_order int          not null default 0 comment '표시 순서',
 
     created_at    datetime     not null default current_timestamp comment '등록일',
     updated_at    datetime     not null default current_timestamp on update current_timestamp comment '수정일',
 
     CONSTRAINT fk_product_image_product_id FOREIGN KEY (product_id) REFERENCES product (product_id),
+    CONSTRAINT uq_product_image_storage_key UNIQUE (storage_key),
     INDEX idx_product_image_lookup (product_id, image_type, display_order)
 );
 

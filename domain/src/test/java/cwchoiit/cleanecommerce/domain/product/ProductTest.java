@@ -229,13 +229,20 @@ class ProductTest {
                         .images(
                                 List.of(
                                         new ImagePayload(
-                                                ProductImageType.THUMBNAIL, "images/thumb.jpg", 0)))
+                                                ProductImageType.THUMBNAIL,
+                                                "https://cdn.example.com/thumb.jpg",
+                                                "products/thumbnail/2026/05/uuid.jpg",
+                                                "image/jpeg",
+                                                102400L,
+                                                0)))
                         .build();
 
         Product product = Product.register(payload, defaultSeller, defaultCategory);
 
         assertThat(product.getImages()).hasSize(1);
-        assertThat(product.getImages().get(0).getImageType()).isEqualTo(ProductImageType.THUMBNAIL);
+        assertThat(product.getImages().getFirst().getImageType()).isEqualTo(ProductImageType.THUMBNAIL);
+        assertThat(product.getImages().getFirst().getStorageKey())
+                .isEqualTo("products/thumbnail/2026/05/uuid.jpg");
     }
 
     @Test
@@ -274,17 +281,32 @@ class ProductTest {
     void addImage() {
         Product product = ProductFixture.register();
 
-        ProductImage image = product.addImage(ProductImageType.THUMBNAIL, "image/thumb.jpg", 0);
+        ProductImage image =
+                product.addImage(
+                        ProductImageType.THUMBNAIL,
+                        "https://cdn.example.com/thumb.jpg",
+                        "products/thumbnail/2026/05/uuid.jpg",
+                        "image/jpeg",
+                        102400L,
+                        0);
 
         assertThat(product.getImages()).hasSize(1);
         assertThat(image.getImageType()).isEqualTo(ProductImageType.THUMBNAIL);
+        assertThat(image.getStorageKey()).isEqualTo("products/thumbnail/2026/05/uuid.jpg");
     }
 
     @Test
     @DisplayName("이미지를 제거한다")
     void removeImage() {
         Product product = ProductFixture.register();
-        ProductImage image = product.addImage(ProductImageType.THUMBNAIL, "image/thumb.jpg", 0);
+        ProductImage image =
+                product.addImage(
+                        ProductImageType.THUMBNAIL,
+                        "https://cdn.example.com/thumb.jpg",
+                        "products/thumbnail/2026/05/uuid.jpg",
+                        "image/jpeg",
+                        102400L,
+                        0);
 
         product.removeImage(image);
 
