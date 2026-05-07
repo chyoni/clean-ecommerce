@@ -207,11 +207,14 @@ class ProductTest {
     @Test
     @DisplayName("상품 등록 시 payload 의 SKU 가 함께 저장된다")
     void registerWithSkusFromPayload() {
-        ProductRegisterPayload payload = ProductFixture.builder()
-                .skus(List.of(
-                        new SkuPayload("SKU-A", null, 1_000_000, 10),
-                        new SkuPayload("SKU-B", Map.of("color", "RED"), 1_200_000, 5)))
-                .build();
+        ProductRegisterPayload payload =
+                ProductFixture.builder()
+                        .skus(
+                                List.of(
+                                        new SkuPayload("SKU-A", null, 1_000_000, 10),
+                                        new SkuPayload(
+                                                "SKU-B", Map.of("color", "RED"), 1_200_000, 5)))
+                        .build();
 
         Product product = Product.register(payload, defaultSeller, defaultCategory);
 
@@ -221,10 +224,13 @@ class ProductTest {
     @Test
     @DisplayName("상품 등록 시 payload 의 이미지가 함께 저장된다")
     void registerWithImagesFromPayload() {
-        ProductRegisterPayload payload = ProductFixture.builder()
-                .images(List.of(
-                        new ImagePayload(ProductImageType.THUMBNAIL, "images/thumb.jpg", 0)))
-                .build();
+        ProductRegisterPayload payload =
+                ProductFixture.builder()
+                        .images(
+                                List.of(
+                                        new ImagePayload(
+                                                ProductImageType.THUMBNAIL, "images/thumb.jpg", 0)))
+                        .build();
 
         Product product = Product.register(payload, defaultSeller, defaultCategory);
 
@@ -235,9 +241,7 @@ class ProductTest {
     @Test
     @DisplayName("상품 등록 시 SKU 가 비어있으면 예외가 발생한다")
     void registerFailEmptySkus() {
-        ProductRegisterPayload payload = ProductFixture.builder()
-                .skus(List.of())
-                .build();
+        ProductRegisterPayload payload = ProductFixture.builder().skus(List.of()).build();
 
         assertThatThrownBy(() -> Product.register(payload, defaultSeller, defaultCategory))
                 .isInstanceOf(IllegalStateException.class);

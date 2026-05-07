@@ -1,11 +1,7 @@
 package cwchoiit.cleanecommerce.domain;
 
 import cwchoiit.cleanecommerce.domain.member.Member;
-import cwchoiit.cleanecommerce.domain.product.ImagePayload;
-import cwchoiit.cleanecommerce.domain.product.Product;
-import cwchoiit.cleanecommerce.domain.product.ProductRegisterPayload;
-import cwchoiit.cleanecommerce.domain.product.ProductStatus;
-import cwchoiit.cleanecommerce.domain.product.SkuPayload;
+import cwchoiit.cleanecommerce.domain.product.*;
 import cwchoiit.cleanecommerce.domain.product.category.Category;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -39,8 +35,8 @@ public class ProductFixture {
         private LocalDateTime salesStartDate = LocalDateTime.now();
         private LocalDateTime salesEndDate = null;
         private Map<String, Object> attributes = Map.of("screen_size", 6.2, "storage", 256);
-        private List<SkuPayload> skus = List.of(
-                new SkuPayload("DEFAULT-SKU", null, 1_500_000, 20_000_000));
+        private List<SkuPayload> skus =
+                List.of(new SkuPayload("DEFAULT-SKU", null, 1_500_000, 20_000_000));
         private List<ImagePayload> images = null;
 
         public Builder sellerId(Long v) {

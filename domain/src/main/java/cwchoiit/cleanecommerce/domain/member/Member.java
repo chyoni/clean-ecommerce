@@ -2,7 +2,7 @@ package cwchoiit.cleanecommerce.domain.member;
 
 import static java.util.Objects.requireNonNull;
 import static java.util.Objects.requireNonNullElse;
-import static org.springframework.util.Assert.*;
+import static org.springframework.util.Assert.state;
 
 import cwchoiit.cleanecommerce.domain.BaseEntity;
 import cwchoiit.cleanecommerce.domain.member.vo.Email;

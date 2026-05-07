@@ -36,7 +36,11 @@ public class ProductSku extends BaseEntity {
     private boolean active;
 
     static ProductSku create(
-            Product product, String skuCode, Map<String, Object> options, int price, int stockQuantity) {
+            Product product,
+            String skuCode,
+            Map<String, Object> options,
+            int price,
+            int stockQuantity) {
         ProductSku sku = new ProductSku();
 
         state(price >= 0, "가격은 0원 또는 0원보다 커야 합니다");
