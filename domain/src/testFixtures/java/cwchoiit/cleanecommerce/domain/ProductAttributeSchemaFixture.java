@@ -1,7 +1,7 @@
 package cwchoiit.cleanecommerce.domain;
 
-import cwchoiit.cleanecommerce.domain.product.schema.AttributeType;
-import cwchoiit.cleanecommerce.domain.product.schema.ProductAttributeSchema;
+import cwchoiit.cleanecommerce.domain.catalog.schema.AttributeType;
+import cwchoiit.cleanecommerce.domain.catalog.schema.ProductAttributeSchema;
 
 public class ProductAttributeSchemaFixture {
 

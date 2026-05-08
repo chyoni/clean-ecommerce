@@ -1,8 +1,8 @@
 package cwchoiit.cleanecommerce.domain;
 
+import cwchoiit.cleanecommerce.domain.catalog.category.Category;
+import cwchoiit.cleanecommerce.domain.catalog.product.*;
 import cwchoiit.cleanecommerce.domain.member.Member;
-import cwchoiit.cleanecommerce.domain.product.*;
-import cwchoiit.cleanecommerce.domain.product.category.Category;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;

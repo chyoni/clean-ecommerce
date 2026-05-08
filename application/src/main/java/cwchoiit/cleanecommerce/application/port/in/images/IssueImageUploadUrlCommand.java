@@ -1,6 +1,6 @@
 package cwchoiit.cleanecommerce.application.port.in.images;
 
-import cwchoiit.cleanecommerce.domain.product.ProductImageType;
+import cwchoiit.cleanecommerce.domain.catalog.product.ProductImageType;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;

@@ -5,8 +5,8 @@ import cwchoiit.cleanecommerce.adapter.web.product.response.ProductRegisterRespo
 import cwchoiit.cleanecommerce.application.port.in.ProductRegisterUseCase;
 import cwchoiit.cleanecommerce.application.port.in.images.IssueImageUploadUrlCommand;
 import cwchoiit.cleanecommerce.application.port.in.images.IssueImageUploadUrlUseCase;
-import cwchoiit.cleanecommerce.domain.product.Product;
-import cwchoiit.cleanecommerce.domain.product.ProductRegisterPayload;
+import cwchoiit.cleanecommerce.domain.catalog.product.Product;
+import cwchoiit.cleanecommerce.domain.catalog.product.ProductRegisterPayload;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

@@ -1,6 +1,6 @@
 package cwchoiit.cleanecommerce.adapter.storage;
 
-import cwchoiit.cleanecommerce.application.product.images.ImageUploadPolicy;
+import cwchoiit.cleanecommerce.application.catalog.product.images.ImageUploadPolicy;
 import java.net.URI;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;

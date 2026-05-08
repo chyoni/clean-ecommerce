@@ -2,15 +2,14 @@ package cwchoiit.cleanecommerce.application.port.in.images;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
+import cwchoiit.cleanecommerce.application.catalog.product.images.ImageUploadPolicy;
+import cwchoiit.cleanecommerce.application.catalog.product.images.IssueImageUploadUrlService;
 import cwchoiit.cleanecommerce.application.port.out.images.ImageStoragePort;
 import cwchoiit.cleanecommerce.application.port.out.images.PresignedUploadDescriptor;
-import cwchoiit.cleanecommerce.application.product.images.ImageUploadPolicy;
-import cwchoiit.cleanecommerce.application.product.images.IssueImageUploadUrlService;
-import cwchoiit.cleanecommerce.domain.product.ProductImageType;
+import cwchoiit.cleanecommerce.domain.catalog.product.ProductImageType;
 import java.net.URI;
 import java.time.Duration;
 import java.time.Instant;

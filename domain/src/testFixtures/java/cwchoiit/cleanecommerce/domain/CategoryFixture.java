@@ -1,6 +1,6 @@
 package cwchoiit.cleanecommerce.domain;
 
-import cwchoiit.cleanecommerce.domain.product.category.Category;
+import cwchoiit.cleanecommerce.domain.catalog.category.Category;
 import java.lang.reflect.Field;
 
 public class CategoryFixture {

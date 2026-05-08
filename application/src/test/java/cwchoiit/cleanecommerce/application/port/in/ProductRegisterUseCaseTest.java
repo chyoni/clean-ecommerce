@@ -4,19 +4,21 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+import cwchoiit.cleanecommerce.application.catalog.category.CategoryQueryService;
+import cwchoiit.cleanecommerce.application.catalog.product.ProductRegisterService;
 import cwchoiit.cleanecommerce.application.port.out.CategoryRepository;
 import cwchoiit.cleanecommerce.application.port.out.MemberRepository;
 import cwchoiit.cleanecommerce.application.port.out.ProductAttributeSchemaRepository;
 import cwchoiit.cleanecommerce.application.port.out.ProductRepository;
-import cwchoiit.cleanecommerce.application.product.ProductRegisterService;
 import cwchoiit.cleanecommerce.domain.CategoryFixture;
 import cwchoiit.cleanecommerce.domain.MemberFixture;
 import cwchoiit.cleanecommerce.domain.ProductAttributeSchemaFixture;
 import cwchoiit.cleanecommerce.domain.ProductFixture;
-import cwchoiit.cleanecommerce.domain.product.Product;
-import cwchoiit.cleanecommerce.domain.product.ProductRegisterPayload;
-import cwchoiit.cleanecommerce.domain.product.schema.ProductAttributeSchema;
+import cwchoiit.cleanecommerce.domain.catalog.product.Product;
+import cwchoiit.cleanecommerce.domain.catalog.product.ProductRegisterPayload;
+import cwchoiit.cleanecommerce.domain.catalog.schema.ProductAttributeSchema;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -34,14 +36,16 @@ class ProductRegisterUseCaseTest {
     @Mock ProductAttributeSchemaRepository productAttributeSchemaRepository;
 
     ProductRegisterUseCase productRegisterUseCase;
+    CategoryQueryUseCase categoryQueryUseCase;
 
     @BeforeEach
     void setUp() {
+        categoryQueryUseCase = new CategoryQueryService(categoryRepository);
         productRegisterUseCase =
                 new ProductRegisterService(
                         productRepository,
                         memberRepository,
-                        categoryRepository,
+                        categoryQueryUseCase,
                         productAttributeSchemaRepository);
         lenient()
                 .when(memberRepository.findByMemberId(any()))
@@ -83,7 +87,7 @@ class ProductRegisterUseCaseTest {
         ProductRegisterPayload payload = ProductFixture.getProductRegisterPayload();
 
         assertThatThrownBy(() -> productRegisterUseCase.register(payload))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(NoSuchElementException.class);
     }
 
     @Test
