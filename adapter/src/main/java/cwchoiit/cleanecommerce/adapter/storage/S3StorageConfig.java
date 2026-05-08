@@ -2,6 +2,7 @@ package cwchoiit.cleanecommerce.adapter.storage;
 
 import cwchoiit.cleanecommerce.application.catalog.product.images.ImageUploadPolicy;
 import java.net.URI;
+import lombok.Generated;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,6 +12,7 @@ import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Configuration;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 
+@Generated
 @Configuration
 @EnableConfigurationProperties(S3StorageProperties.class)
 public class S3StorageConfig {

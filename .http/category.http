@@ -1,0 +1,8 @@
+### Create Category
+POST http://localhost:8080/api/v1/categories
+Content-Type: application/json
+
+{
+  "name": "악세사리",
+  "parentCategoryId": 2
+}

@@ -25,8 +25,8 @@ create table if not exists category
     name        varchar(100) not null comment '카테고리명',
     parent_id   bigint       null comment '상위 카테고리 ID',
 
-    created_at       datetime     not null default current_timestamp comment '등록일 (시스템 기준)',
-    updated_at       datetime     not null default current_timestamp on update current_timestamp comment '수정일',
+    created_at  datetime     not null default current_timestamp comment '등록일 (시스템 기준)',
+    updated_at  datetime     not null default current_timestamp on update current_timestamp comment '수정일',
 
     CONSTRAINT fk_category_parent_id FOREIGN KEY (parent_id) REFERENCES category (category_id),
     UNIQUE KEY uq_category_name (name)
@@ -123,16 +123,23 @@ create table if not exists product_image
 -- ============================================================
 
 -- 회원
-insert into member (member_id, name, encoded_password, email_address, phone_number, role) values
-    (1, '관리자', '$2a$10$placeholderHashForLocalDevOnly...........................', 'admin@local.dev', '01000000000', 'ADMIN'),
-    (2, '애플코리아', '$2a$10$placeholderHashForLocalDevOnly...........................', 'apple.kr@local.dev', '01011111111', 'SELLER'),
-    (3, '삼성스토어', '$2a$10$placeholderHashForLocalDevOnly...........................', 'samsung@local.dev', '01022222222', 'SELLER'),
-    (4, '유니클로', '$2a$10$placeholderHashForLocalDevOnly...........................', 'uniqlo@local.dev', '01033333333', 'SELLER'),
-    (5, '신선마켓', '$2a$10$placeholderHashForLocalDevOnly...........................', 'fresh@local.dev', '01044444444', 'SELLER'),
-    (6, '구매자A', '$2a$10$placeholderHashForLocalDevOnly...........................', 'buyer@local.dev', '01055555555', 'NORMAL');
+insert into member (member_id, name, encoded_password, email_address, phone_number, role)
+values (1, '관리자', '$2a$10$placeholderHashForLocalDevOnly...........................', 'admin@local.dev', '01000000000',
+        'ADMIN'),
+       (2, '애플코리아', '$2a$10$placeholderHashForLocalDevOnly...........................', 'apple.kr@local.dev',
+        '01011111111', 'SELLER'),
+       (3, '삼성스토어', '$2a$10$placeholderHashForLocalDevOnly...........................', 'samsung@local.dev',
+        '01022222222', 'SELLER'),
+       (4, '유니클로', '$2a$10$placeholderHashForLocalDevOnly...........................', 'uniqlo@local.dev',
+        '01033333333', 'SELLER'),
+       (5, '신선마켓', '$2a$10$placeholderHashForLocalDevOnly...........................', 'fresh@local.dev', '01044444444',
+        'SELLER'),
+       (6, '구매자A', '$2a$10$placeholderHashForLocalDevOnly...........................', 'buyer@local.dev', '01055555555',
+        'NORMAL');
 
 -- 카테고리 (대 → 중 → 소)
-insert into category (category_id, name, parent_id) values
+insert into category (category_id, name, parent_id)
+values
     -- 대분류
     (1, '전자기기', null),
     (2, '패션', null),
@@ -158,13 +165,14 @@ insert into category (category_id, name, parent_id) values
     (61, '세탁기', 50);
 
 -- 상품 속성 스키마 (카테고리별 1:1)
-insert into product_attribute_schema (schema_id, category_id) values
-    (1, 10),  -- 노트북
-    (2, 11),  -- 스마트폰
-    (3, 30),  -- 티셔츠
-    (4, 40),  -- 신선식품
-    (5, 41),  -- 가공식품
-    (6, 60);  -- 냉장고
+insert into product_attribute_schema (schema_id, category_id)
+values (1, 10), -- 노트북
+       (2, 11), -- 스마트폰
+       (3, 30), -- 티셔츠
+       (4, 40), -- 신선식품
+       (5, 41), -- 가공식품
+       (6, 60);
+-- 냉장고
 
 -- 속성 정의
 insert into product_attribute_definition
@@ -172,27 +180,59 @@ insert into product_attribute_definition
 values
     -- [노트북] schema_id = 1
     (1, 'screen_size_inch', 'NUMBER', 1, null),
-    (1, 'storage_gb', 'ENUM', 1, '["256", "512", "1024", "2048"]'),
+    (1, 'storage_gb', 'ENUM', 1, '[
+      "256",
+      "512",
+      "1024",
+      "2048"
+    ]'),
     (1, 'ram_gb', 'NUMBER', 1, null),
     (1, 'cpu', 'STRING', 0, null),
     (1, 'weight_kg', 'NUMBER', 0, null),
 
     -- [스마트폰] schema_id = 2
     (2, 'screen_size_inch', 'NUMBER', 1, null),
-    (2, 'storage_gb', 'ENUM', 1, '["128", "256", "512", "1024"]'),
-    (2, 'color', 'ENUM', 1, '["BLACK", "WHITE", "BLUE", "GOLD", "SILVER"]'),
+    (2, 'storage_gb', 'ENUM', 1, '[
+      "128",
+      "256",
+      "512",
+      "1024"
+    ]'),
+    (2, 'color', 'ENUM', 1, '[
+      "BLACK",
+      "WHITE",
+      "BLUE",
+      "GOLD",
+      "SILVER"
+    ]'),
     (2, 'waterproof', 'BOOLEAN', 0, null),
 
     -- [티셔츠] schema_id = 3
-    (3, 'size', 'ENUM', 1, '["XS", "S", "M", "L", "XL", "XXL"]'),
+    (3, 'size', 'ENUM', 1, '[
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ]'),
     (3, 'color', 'STRING', 1, null),
     (3, 'material', 'STRING', 0, null),
-    (3, 'season', 'ENUM', 0, '["SPRING", "SUMMER", "FALL", "WINTER"]'),
+    (3, 'season', 'ENUM', 0, '[
+      "SPRING",
+      "SUMMER",
+      "FALL",
+      "WINTER"
+    ]'),
 
     -- [신선식품] schema_id = 4
     (4, 'expiry_date', 'DATE', 1, null),
     (4, 'origin', 'STRING', 1, null),
-    (4, 'storage_type', 'ENUM', 1, '["FROZEN", "REFRIGERATED", "ROOM"]'),
+    (4, 'storage_type', 'ENUM', 1, '[
+      "FROZEN",
+      "REFRIGERATED",
+      "ROOM"
+    ]'),
     (4, 'weight_g', 'NUMBER', 0, null),
 
     -- [가공식품] schema_id = 5
@@ -203,7 +243,13 @@ values
     -- [냉장고] schema_id = 6
     (6, 'manufacture_date', 'DATE', 1, null),
     (6, 'capacity_l', 'NUMBER', 1, null),
-    (6, 'energy_grade', 'ENUM', 1, '["1", "2", "3", "4", "5"]'),
+    (6, 'energy_grade', 'ENUM', 1, '[
+      "1",
+      "2",
+      "3",
+      "4",
+      "5"
+    ]'),
     (6, 'door_count', 'NUMBER', 1, null),
     (6, 'color', 'STRING', 0, null);
 
