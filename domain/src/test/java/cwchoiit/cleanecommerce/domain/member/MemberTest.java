@@ -129,6 +129,16 @@ class MemberTest {
                 .isInstanceOf(IllegalStateException.class);
     }
 
+    @Test
+    @DisplayName("관리자 계정의 유저는 관리자 역할로 변경이 가능하다")
+    void validateAdmin() {
+        Member adminMember = MemberFixture.register(MemberFixture.builder().role(ADMIN).build());
+
+        adminMember.changeMemberRole(ADMIN);
+
+        assertThat(adminMember.getRole()).isEqualTo(ADMIN);
+    }
+
     @ParameterizedTest(name = "{1} 이 null이면 등록에 실패한다")
     @MethodSource("nullRequiredFieldPayloads")
     @DisplayName("필수 필드가 null이면 등록에 실패한다")
