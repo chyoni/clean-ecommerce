@@ -1,5 +1,5 @@
 ### Step 1: Presigned URL 발급
-POST http://localhost:8080/api/products/images/upload-url
+POST http://localhost:8080/api/v1/products/images/upload-url
 Content-Type: application/json
 
 {
