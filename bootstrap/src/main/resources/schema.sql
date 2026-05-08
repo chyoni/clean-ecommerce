@@ -28,18 +28,20 @@ create table if not exists category
     created_at       datetime     not null default current_timestamp comment '등록일 (시스템 기준)',
     updated_at       datetime     not null default current_timestamp on update current_timestamp comment '수정일',
 
-    CONSTRAINT fk_category_parent_id FOREIGN KEY (parent_id) REFERENCES category (category_id)
+    CONSTRAINT fk_category_parent_id FOREIGN KEY (parent_id) REFERENCES category (category_id),
+    UNIQUE KEY uq_category_name (name)
 );
 
 create table if not exists product_attribute_schema
 (
     schema_id   bigint   not null primary key auto_increment comment '스키마 ID',
-    category_id bigint   not null unique comment '카테고리 ID (1:1)',
+    category_id bigint   not null comment '카테고리 ID (1:1)',
 
     created_at  datetime not null default current_timestamp comment '등록일',
     updated_at  datetime not null default current_timestamp on update current_timestamp comment '수정일',
 
-    CONSTRAINT fk_pas_category FOREIGN KEY (category_id) REFERENCES category (category_id)
+    CONSTRAINT fk_pas_category FOREIGN KEY (category_id) REFERENCES category (category_id),
+    UNIQUE KEY uq_pas_category (category_id)
 );
 
 create table if not exists product_attribute_definition
