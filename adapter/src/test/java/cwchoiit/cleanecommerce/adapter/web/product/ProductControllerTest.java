@@ -4,6 +4,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -68,7 +69,7 @@ class ProductControllerTest {
                         ProductImageType.THUMBNAIL, "photo.jpg", "image/jpeg", 1024L);
 
         mockMvc.perform(
-                        post("/api/products/images/upload-url")
+                        post("/api/v1/products/images/upload-url")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(MAPPER.writeValueAsString(request)))
                 .andExpect(status().isCreated())
@@ -92,9 +93,10 @@ class ProductControllerTest {
                 """;
 
         mockMvc.perform(
-                        post("/api/products/images/upload-url")
+                        post("/api/v1/products/images/upload-url")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(requestJson))
+                .andDo(print())
                 .andExpect(status().isBadRequest());
     }
 
@@ -112,7 +114,7 @@ class ProductControllerTest {
                 """;
 
         mockMvc.perform(
-                        post("/api/products/images/upload-url")
+                        post("/api/v1/products/images/upload-url")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(requestJson))
                 .andExpect(status().isBadRequest());
@@ -142,7 +144,7 @@ class ProductControllerTest {
                         null);
 
         mockMvc.perform(
-                        post("/api/products")
+                        post("/api/v1/products")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(MAPPER.writeValueAsString(payload)))
                 .andExpect(status().isCreated())
@@ -166,7 +168,7 @@ class ProductControllerTest {
                 """;
 
         mockMvc.perform(
-                        post("/api/products")
+                        post("/api/v1/products")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(requestJson))
                 .andExpect(status().isBadRequest());
@@ -188,7 +190,7 @@ class ProductControllerTest {
                 """;
 
         mockMvc.perform(
-                        post("/api/products")
+                        post("/api/v1/products")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(requestJson))
                 .andExpect(status().isBadRequest());

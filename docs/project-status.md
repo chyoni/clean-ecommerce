@@ -102,18 +102,18 @@ MinIO + AWS SDK v2 기반 이미지 업로드 인프라 구현 완료 (참고: `
 
 ## 남은 작업
 
-### P1 — 즉시 구현 대상
+~~### P1 — 즉시 구현 대상~~
 
-#### Category CRUD
-`Category` 도메인(entity, create 팩토리)만 존재. UseCase/Service/Controller 없음.
+~~#### Category CRUD~~
+~~`Category` 도메인(entity, create 팩토리)만 존재. UseCase/Service/Controller 없음.~~
 
-| 항목 | 상태 |
-|------|------|
-| `CategoryRegisterUseCase` + `CategoryRegisterService` (parent 지정 가능) | 미구현 |
-| `CategoryRepository` out port (application/port/out) | 미구현 |
-| Controller: `POST /api/categories` | 미구현 |
+| 항목                                                               | 상태 |
+|------------------------------------------------------------------|----|
+| `CategoryCreateUseCase` + `CategoryCreateService` (parent 지정 가능) | 구현 |
+| `CategoryRepository` out port (application/port/out)             | 구현 |
+| Controller: `POST /api/v1/categories`                            | 구현 |
 
-> 상품 등록 시 categoryId가 필요하므로 카테고리가 먼저 있어야 함.
+~~> 상품 등록 시 categoryId가 필요하므로 카테고리가 먼저 있어야 함.~~
 
 ---
 

@@ -1,4 +1,5 @@
 package cwchoiit.cleanecommerce.adapter.web.category.request;
 
-public record CategoryCreateRequest(String name, Long parentCategoryId) {
-}
+import jakarta.validation.constraints.NotNull;
+
+public record CategoryCreateRequest(@NotNull String name, Long parentCategoryId) {}
