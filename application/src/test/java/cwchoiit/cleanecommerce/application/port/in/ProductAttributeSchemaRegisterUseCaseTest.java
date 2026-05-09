@@ -1,6 +1,7 @@
 package cwchoiit.cleanecommerce.application.port.in;
 
 import static cwchoiit.cleanecommerce.domain.catalog.schema.AttributeType.*;
+import static cwchoiit.cleanecommerce.domain.catalog.schema.AttributeType.STRING;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.eq;
@@ -124,9 +125,43 @@ class ProductAttributeSchemaRegisterUseCaseTest {
                 .isInstanceOf(NullPointerException.class);
     }
 
+    @Test
+    @DisplayName("스키마에 속성을 추가한다")
+    void addDefinitions() {
+        long schemaId = 1L;
+        ProductAttributeSchema schema = ProductAttributeSchemaFixture.create(schemaId);
+        when(productAttributeSchemaRepository.findBySchemaId(eq(schemaId)))
+                .thenReturn(Optional.of(schema));
+
+        assertThat(schema.getDefinitions().size()).isEqualTo(2);
+
+        when(productAttributeSchemaRepository.save(any())).thenAnswer(i -> i.getArgument(0));
+
+        ProductAttributeSchema updatedSchema =
+                productAttributeSchemaRegisterUseCase.addDefinition(
+                        schemaId, getAttributeDefinitionPayloads());
+
+        assertThat(updatedSchema.getDefinitions().size()).isEqualTo(4);
+        assertThat(updatedSchema).isEqualTo(schema);
+    }
+
+    @Test
+    @DisplayName("없는 스키마에 속성을 추가하려고하면 오류가 발생한다")
+    void addDefinitionsFail() {
+        long schemaId = 1L;
+        when(productAttributeSchemaRepository.findBySchemaId(eq(schemaId)))
+                .thenReturn(Optional.empty());
+
+        assertThatThrownBy(
+                        () ->
+                                productAttributeSchemaRegisterUseCase.addDefinition(
+                                        schemaId, getAttributeDefinitionPayloads()))
+                .isInstanceOf(NoSuchElementException.class);
+    }
+
     private @NonNull List<AttributeDefinitionPayload> getAttributeDefinitionPayloads() {
         return List.of(
-                new AttributeDefinitionPayload("screen_size", NUMBER, true, null),
+                new AttributeDefinitionPayload("weight_kg", NUMBER, true, null),
                 new AttributeDefinitionPayload(
                         "color", STRING, true, List.of("RED", "BLUE", "GREEN")));
     }

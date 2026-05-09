@@ -9,4 +9,6 @@ public interface ProductAttributeSchemaRepository extends Repository<ProductAttr
     ProductAttributeSchema save(ProductAttributeSchema productAttributeSchema);
 
     Optional<ProductAttributeSchema> findByCategoryId(Long categoryId);
+
+    Optional<ProductAttributeSchema> findBySchemaId(Long schemaId);
 }

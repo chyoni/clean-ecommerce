@@ -85,6 +85,41 @@ class ProductAttributeSchemaTest {
     }
 
     @Test
+    @DisplayName("복수의 속성을 정상적으로 추가할 수 있다")
+    void addDefinitions() {
+        assertThat(schema.getDefinitions().size()).isEqualTo(2);
+
+        AttributeDefinitionPayload colorDefinition =
+                new AttributeDefinitionPayload(
+                        "color", AttributeType.ENUM, true, List.of("RED", "BLUE"));
+        AttributeDefinitionPayload weightKgDefinition =
+                new AttributeDefinitionPayload("weight_kg", AttributeType.NUMBER, false, null);
+
+        List<AttributeDefinition> attributeDefinitions =
+                schema.addDefinitions(List.of(colorDefinition, weightKgDefinition));
+
+        assertThat(schema.getDefinitions().size()).isEqualTo(4);
+        assertThat(attributeDefinitions).isEqualTo(schema.getDefinitions());
+    }
+
+    @Test
+    @DisplayName("단일 속성을 정상적으로 추가할 수 있다")
+    void addDefinition() {
+        assertThat(schema.getDefinitions().size()).isEqualTo(2);
+
+        AttributeDefinitionPayload colorDefinition =
+                new AttributeDefinitionPayload(
+                        "color", AttributeType.ENUM, true, List.of("RED", "BLUE"));
+
+        AttributeDefinition attributeDefinition = schema.addDefinition(colorDefinition);
+
+        assertThat(schema.getDefinitions().size()).isEqualTo(3);
+        assertThat(attributeDefinition.getAttributeKey()).isEqualTo(colorDefinition.attributeKey());
+        assertThat(attributeDefinition.getAttributeType())
+                .isEqualTo(colorDefinition.attributeType());
+    }
+
+    @Test
     @DisplayName("속성을 정상적으로 삭제할 수 있다")
     void removeDefinition() {
         assertThat(schema.getDefinitions().size()).isEqualTo(2);

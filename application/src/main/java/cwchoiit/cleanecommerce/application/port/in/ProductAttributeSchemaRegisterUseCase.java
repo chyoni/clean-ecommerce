@@ -8,4 +8,7 @@ import java.util.List;
 public interface ProductAttributeSchemaRegisterUseCase {
     ProductAttributeSchema register(
             Long categoryId, @Valid List<AttributeDefinitionPayload> payload);
+
+    ProductAttributeSchema addDefinition(
+            Long schemaId, @Valid List<AttributeDefinitionPayload> payload);
 }

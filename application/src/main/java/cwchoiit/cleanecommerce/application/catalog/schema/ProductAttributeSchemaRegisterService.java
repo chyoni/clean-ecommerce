@@ -35,6 +35,17 @@ public class ProductAttributeSchemaRegisterService
         return productAttributeSchemaRepository.save(schema);
     }
 
+    @Override
+    public ProductAttributeSchema addDefinition(
+            Long schemaId, @Valid List<AttributeDefinitionPayload> payload) {
+        ProductAttributeSchema schema =
+                productAttributeSchemaRepository.findBySchemaId(schemaId).orElseThrow();
+
+        schema.addDefinitions(payload);
+
+        return productAttributeSchemaRepository.save(schema);
+    }
+
     private void checkDuplicateSchema(Long categoryId) {
         if (productAttributeSchemaRepository.findByCategoryId(categoryId).isPresent()) {
             throw new IllegalArgumentException("같은 카테고리에 대한 속성 스키마 정의가 이미 존재합니다");

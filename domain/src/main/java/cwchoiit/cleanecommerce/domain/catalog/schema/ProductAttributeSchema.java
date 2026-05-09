@@ -44,6 +44,11 @@ public class ProductAttributeSchema extends BaseEntity {
         return schema;
     }
 
+    public List<AttributeDefinition> addDefinitions(List<AttributeDefinitionPayload> payload) {
+        payload.forEach(this::addDefinition);
+        return definitions;
+    }
+
     public AttributeDefinition addDefinition(AttributeDefinitionPayload payload) {
         AttributeDefinition def = AttributeDefinition.create(this, payload);
         definitions.add(def);
