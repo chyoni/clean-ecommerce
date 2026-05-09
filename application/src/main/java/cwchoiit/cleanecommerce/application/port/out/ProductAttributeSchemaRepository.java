@@ -6,5 +6,7 @@ import org.springframework.data.repository.Repository;
 
 public interface ProductAttributeSchemaRepository extends Repository<ProductAttributeSchema, Long> {
 
+    ProductAttributeSchema save(ProductAttributeSchema productAttributeSchema);
+
     Optional<ProductAttributeSchema> findByCategoryId(Long categoryId);
 }

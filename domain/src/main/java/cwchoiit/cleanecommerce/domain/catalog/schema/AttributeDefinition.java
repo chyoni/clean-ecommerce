@@ -36,17 +36,14 @@ public class AttributeDefinition extends BaseEntity {
     private List<String> allowedValues;
 
     static AttributeDefinition create(
-            ProductAttributeSchema schema,
-            String attributeKey,
-            AttributeType attributeType,
-            boolean required,
-            List<String> allowedValues) {
+            ProductAttributeSchema schema, AttributeDefinitionPayload payload) {
         AttributeDefinition def = new AttributeDefinition();
         def.schema = requireNonNull(schema);
-        def.attributeKey = requireNonNull(attributeKey);
-        def.attributeType = requireNonNull(attributeType);
-        def.required = required;
-        def.allowedValues = allowedValues != null ? new ArrayList<>(allowedValues) : null;
+        def.attributeKey = requireNonNull(payload.attributeKey());
+        def.attributeType = requireNonNull(payload.attributeType());
+        def.required = payload.isRequired();
+        def.allowedValues =
+                payload.allowedValues() != null ? new ArrayList<>(payload.allowedValues()) : null;
         return def;
     }
 

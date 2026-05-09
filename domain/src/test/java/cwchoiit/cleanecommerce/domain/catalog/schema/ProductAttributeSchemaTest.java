@@ -1,9 +1,10 @@
 package cwchoiit.cleanecommerce.domain.catalog.schema;
 
-import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.assertj.core.api.Assertions.*;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -15,9 +16,22 @@ class ProductAttributeSchemaTest {
 
     @BeforeEach
     void setUp() {
-        schema = ProductAttributeSchema.create(1L);
-        schema.addDefinition("screen_size", AttributeType.NUMBER, true, null);
-        schema.addDefinition("storage", AttributeType.NUMBER, false, null);
+        AttributeDefinitionPayload screenSizeDef =
+                new AttributeDefinitionPayload("screen_size", AttributeType.NUMBER, true, null);
+        AttributeDefinitionPayload storageDef =
+                new AttributeDefinitionPayload("storage", AttributeType.NUMBER, false, null);
+
+        schema = ProductAttributeSchema.create(1L, List.of(screenSizeDef, storageDef));
+    }
+
+    @Test
+    @DisplayName("속성값이 없는 스키마 생성도 통과한다")
+    void createWithoutDefinition() {
+        ProductAttributeSchema schemaEmptyDef = ProductAttributeSchema.create(1L, List.of());
+        ProductAttributeSchema schemaWithoutDef = ProductAttributeSchema.create(1L, null);
+
+        assertThat(schemaEmptyDef.getCategoryId()).isEqualTo(1L);
+        assertThat(schemaWithoutDef.getCategoryId()).isEqualTo(1L);
     }
 
     @Test
@@ -68,5 +82,22 @@ class ProductAttributeSchemaTest {
         assertThatThrownBy(() -> schema.validate(attrs))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("NUMBER");
+    }
+
+    @Test
+    @DisplayName("속성을 정상적으로 삭제할 수 있다")
+    void removeDefinition() {
+        assertThat(schema.getDefinitions().size()).isEqualTo(2);
+
+        schema.removeDefinition("screen_size");
+
+        assertThat(schema.getDefinitions().size()).isEqualTo(1);
+    }
+
+    @Test
+    @DisplayName("속성을 삭제할 때 속성키를 NULL로 전달하면 예외가 발생한다")
+    void removeDefinitionFail() {
+        assertThatThrownBy(() -> schema.removeDefinition(null))
+                .isInstanceOf(NullPointerException.class);
     }
 }

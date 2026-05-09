@@ -28,20 +28,22 @@ public class ProductAttributeSchema extends BaseEntity {
     @OneToMany(mappedBy = "schema", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<AttributeDefinition> definitions = new ArrayList<>();
 
-    public static ProductAttributeSchema create(Long categoryId) {
+    public static ProductAttributeSchema create(
+            Long categoryId, List<AttributeDefinitionPayload> payload) {
         ProductAttributeSchema schema = new ProductAttributeSchema();
         schema.categoryId = requireNonNull(categoryId);
+
+        if (payload != null && !payload.isEmpty()) {
+            for (AttributeDefinitionPayload attributeDefinition : payload) {
+                schema.addDefinition(attributeDefinition);
+            }
+        }
+
         return schema;
     }
 
-    public AttributeDefinition addDefinition(
-            String attributeKey,
-            AttributeType attributeType,
-            boolean required,
-            List<String> allowedValues) {
-        AttributeDefinition def =
-                AttributeDefinition.create(
-                        this, attributeKey, attributeType, required, allowedValues);
+    public AttributeDefinition addDefinition(AttributeDefinitionPayload payload) {
+        AttributeDefinition def = AttributeDefinition.create(this, payload);
         definitions.add(def);
         return def;
     }
