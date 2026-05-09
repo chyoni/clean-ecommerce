@@ -6,10 +6,8 @@ import cwchoiit.cleanecommerce.application.port.in.ProductAttributeSchemaRegiste
 import cwchoiit.cleanecommerce.domain.catalog.schema.ProductAttributeSchema;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -19,6 +17,7 @@ public class ProductAttributeSchemaController {
     private final ProductAttributeSchemaRegisterUseCase productAttributeSchemaRegisterUseCase;
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public ProductAttributeSchemaRegisterResponse register(
             @RequestBody @Valid ProductAttributeSchemaRegisterRequest request) {
         ProductAttributeSchema schema =
