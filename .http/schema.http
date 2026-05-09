@@ -1,0 +1,19 @@
+### Create Schema with Definitions
+POST http://localhost:8080/api/v1/schema
+Content-Type: application/json
+
+{
+  "categoryId": 12,
+  "attributeDefinitions": [
+    {
+      "attributeKey": "resolution",
+      "attributeType": "NUMBER",
+      "isRequired": true
+    },
+    {
+      "attributeKey": "pencil_required",
+      "attributeType": "BOOLEAN",
+      "isRequired": true
+    }
+  ]
+}

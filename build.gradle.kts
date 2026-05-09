@@ -65,7 +65,7 @@ subprojects {
         java {
             target("**/*.java")
             targetExclude("**/generated/**/*.java")
-            googleJavaFormat().aosp()
+            googleJavaFormat().aosp().skipJavadocFormatting()
             removeUnusedImports()
             importOrder()
             endWithNewline()

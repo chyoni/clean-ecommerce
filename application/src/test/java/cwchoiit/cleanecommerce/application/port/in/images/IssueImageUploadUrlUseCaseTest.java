@@ -110,4 +110,15 @@ class IssueImageUploadUrlUseCaseTest {
         assertThatThrownBy(() -> service.issue(command))
                 .isInstanceOf(IllegalArgumentException.class);
     }
+
+    @Test
+    @DisplayName("파일명이 점으로 끝나면 예외가 발생한다")
+    void issueFailDotAtEnd() {
+        IssueImageUploadUrlCommand command =
+                new IssueImageUploadUrlCommand(
+                        ProductImageType.THUMBNAIL, "filename.", "image/jpeg", 1024L);
+
+        assertThatThrownBy(() -> service.issue(command))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
 }

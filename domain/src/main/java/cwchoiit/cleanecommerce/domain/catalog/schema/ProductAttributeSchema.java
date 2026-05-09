@@ -12,9 +12,11 @@ import java.util.stream.Collectors;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Entity
 @Getter
+@ToString
 @Table(name = "product_attribute_schema")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ProductAttributeSchema extends BaseEntity {
@@ -53,9 +55,15 @@ public class ProductAttributeSchema extends BaseEntity {
         definitions.removeIf(d -> d.getAttributeKey().equals(attributeKey));
     }
 
+    /**
+     * 상품의 속성을 파라미터로 받아, 해당 상품이 속한 카테고리의 스키마 정의에 유효한지 검사한다.
+     *
+     * @param attributes 상품의 속성. 예) "attributes": { "screen_size": 6.2, "storage": 256, "color":"BLACK" }
+     */
     public void validate(Map<String, Object> attributes) {
         Map<String, Object> attrs = attributes != null ? attributes : Map.of();
 
+        // 현재 스키마가 가진 속성 정의들을 순회
         for (AttributeDefinition def : definitions) {
             def.validateValue(attrs.get(def.getAttributeKey()));
         }

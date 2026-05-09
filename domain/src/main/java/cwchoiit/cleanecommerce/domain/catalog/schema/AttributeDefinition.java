@@ -9,9 +9,11 @@ import java.util.List;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Entity
 @Getter
+@ToString(exclude = "schema")
 @Table(name = "product_attribute_definition")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class AttributeDefinition extends BaseEntity {
