@@ -1,6 +1,7 @@
 package cwchoiit.cleanecommerce.application.catalog.schema;
 
 import cwchoiit.cleanecommerce.application.port.in.CategoryQueryUseCase;
+import cwchoiit.cleanecommerce.application.port.in.ProductAttributeSchemaQueryUseCase;
 import cwchoiit.cleanecommerce.application.port.in.ProductAttributeSchemaRegisterUseCase;
 import cwchoiit.cleanecommerce.application.port.out.ProductAttributeSchemaRepository;
 import cwchoiit.cleanecommerce.domain.catalog.category.Category;
@@ -21,7 +22,9 @@ public class ProductAttributeSchemaRegisterService
         implements ProductAttributeSchemaRegisterUseCase {
 
     private final ProductAttributeSchemaRepository productAttributeSchemaRepository;
+
     private final CategoryQueryUseCase categoryQueryUseCase;
+    private final ProductAttributeSchemaQueryUseCase productAttributeSchemaQueryUseCase;
 
     @Override
     public ProductAttributeSchema register(
@@ -38,8 +41,7 @@ public class ProductAttributeSchemaRegisterService
     @Override
     public ProductAttributeSchema addDefinition(
             Long schemaId, @Valid List<AttributeDefinitionPayload> payload) {
-        ProductAttributeSchema schema =
-                productAttributeSchemaRepository.findBySchemaId(schemaId).orElseThrow();
+        ProductAttributeSchema schema = productAttributeSchemaQueryUseCase.findBySchemaId(schemaId);
 
         schema.addDefinitions(payload);
 
@@ -47,7 +49,7 @@ public class ProductAttributeSchemaRegisterService
     }
 
     private void checkDuplicateSchema(Long categoryId) {
-        if (productAttributeSchemaRepository.findByCategoryId(categoryId).isPresent()) {
+        if (productAttributeSchemaQueryUseCase.existsByCategoryId(categoryId)) {
             throw new IllegalArgumentException("같은 카테고리에 대한 속성 스키마 정의가 이미 존재합니다");
         }
     }

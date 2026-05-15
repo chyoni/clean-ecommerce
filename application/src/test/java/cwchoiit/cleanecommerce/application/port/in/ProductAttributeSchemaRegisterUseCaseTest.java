@@ -8,6 +8,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 import cwchoiit.cleanecommerce.application.catalog.category.CategoryQueryService;
+import cwchoiit.cleanecommerce.application.catalog.schema.ProductAttributeSchemaQueryService;
 import cwchoiit.cleanecommerce.application.catalog.schema.ProductAttributeSchemaRegisterService;
 import cwchoiit.cleanecommerce.application.port.out.CategoryRepository;
 import cwchoiit.cleanecommerce.application.port.out.ProductAttributeSchemaRepository;
@@ -31,6 +32,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class ProductAttributeSchemaRegisterUseCaseTest {
 
     ProductAttributeSchemaRegisterUseCase productAttributeSchemaRegisterUseCase;
+    ProductAttributeSchemaQueryUseCase productAttributeSchemaQueryUseCase;
     CategoryQueryUseCase categoryQueryUseCase;
 
     @Mock CategoryRepository categoryRepository;
@@ -39,9 +41,13 @@ class ProductAttributeSchemaRegisterUseCaseTest {
     @BeforeEach
     void setUp() {
         categoryQueryUseCase = new CategoryQueryService(categoryRepository);
+        productAttributeSchemaQueryUseCase =
+                new ProductAttributeSchemaQueryService(productAttributeSchemaRepository);
         productAttributeSchemaRegisterUseCase =
                 new ProductAttributeSchemaRegisterService(
-                        productAttributeSchemaRepository, categoryQueryUseCase);
+                        productAttributeSchemaRepository,
+                        categoryQueryUseCase,
+                        productAttributeSchemaQueryUseCase);
     }
 
     @Test
@@ -51,8 +57,6 @@ class ProductAttributeSchemaRegisterUseCaseTest {
         Category category = CategoryFixture.register();
 
         when(categoryRepository.findByCategoryId(eq(categoryId))).thenReturn(Optional.of(category));
-
-        when(productAttributeSchemaRepository.findByCategoryId(any())).thenReturn(Optional.empty());
 
         productAttributeSchemaRegisterUseCase.register(categoryId, null);
 
@@ -78,6 +82,7 @@ class ProductAttributeSchemaRegisterUseCaseTest {
         when(categoryRepository.findByCategoryId(eq(categoryId))).thenReturn(Optional.of(category));
 
         ProductAttributeSchema schema = ProductAttributeSchemaFixture.create(categoryId);
+
         when(productAttributeSchemaRepository.findByCategoryId(any()))
                 .thenReturn(Optional.of(schema));
 
@@ -112,7 +117,6 @@ class ProductAttributeSchemaRegisterUseCaseTest {
         Category category = CategoryFixture.register();
 
         when(categoryRepository.findByCategoryId(eq(categoryId))).thenReturn(Optional.of(category));
-        when(productAttributeSchemaRepository.findByCategoryId(any())).thenReturn(Optional.empty());
 
         // attributeType은 필수값
         List<AttributeDefinitionPayload> definitions =
