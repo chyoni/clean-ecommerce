@@ -48,6 +48,13 @@ public class ProductAttributeSchemaRegisterService
         return productAttributeSchemaRepository.save(schema);
     }
 
+    @Override
+    public boolean removeDefinition(Long schemaId, String attributeKey) {
+        ProductAttributeSchema schema = productAttributeSchemaQueryUseCase.findBySchemaId(schemaId);
+
+        return schema.removeDefinition(attributeKey);
+    }
+
     private void checkDuplicateSchema(Long categoryId) {
         if (productAttributeSchemaQueryUseCase.existsByCategoryId(categoryId)) {
             throw new IllegalArgumentException("같은 카테고리에 대한 속성 스키마 정의가 이미 존재합니다");

@@ -11,4 +11,6 @@ public interface ProductAttributeSchemaRegisterUseCase {
 
     ProductAttributeSchema addDefinition(
             Long schemaId, @Valid List<AttributeDefinitionPayload> payload);
+
+    boolean removeDefinition(Long schemaId, String attributeKey);
 }

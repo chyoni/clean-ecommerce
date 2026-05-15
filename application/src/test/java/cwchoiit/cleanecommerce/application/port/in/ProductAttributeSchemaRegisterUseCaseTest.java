@@ -150,6 +150,29 @@ class ProductAttributeSchemaRegisterUseCaseTest {
     }
 
     @Test
+    @DisplayName("스키마에 속성을 삭제한다")
+    void removeDefinition() {
+        long schemaId = 1L;
+        ProductAttributeSchema schema = ProductAttributeSchemaFixture.create(schemaId);
+        when(productAttributeSchemaRepository.findBySchemaId(eq(schemaId)))
+                .thenReturn(Optional.of(schema));
+
+        assertThat(schema.getDefinitions().size()).isEqualTo(2);
+
+        boolean removedDefinition =
+                productAttributeSchemaRegisterUseCase.removeDefinition(schemaId, "screen_size");
+
+        assertThat(removedDefinition).isTrue();
+        assertThat(schema.getDefinitions().size()).isEqualTo(1);
+
+        boolean notRemoved =
+                productAttributeSchemaRegisterUseCase.removeDefinition(schemaId, "doesNotHave");
+
+        assertThat(notRemoved).isFalse();
+        assertThat(schema.getDefinitions().size()).isEqualTo(1);
+    }
+
+    @Test
     @DisplayName("없는 스키마에 속성을 추가하려고하면 오류가 발생한다")
     void addDefinitionsFail() {
         long schemaId = 1L;

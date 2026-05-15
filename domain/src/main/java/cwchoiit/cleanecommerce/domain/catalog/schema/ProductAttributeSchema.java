@@ -55,9 +55,9 @@ public class ProductAttributeSchema extends BaseEntity {
         return def;
     }
 
-    public void removeDefinition(String attributeKey) {
+    public boolean removeDefinition(String attributeKey) {
         requireNonNull(attributeKey);
-        definitions.removeIf(d -> d.getAttributeKey().equals(attributeKey));
+        return definitions.removeIf(d -> d.getAttributeKey().equals(attributeKey));
     }
 
     /**

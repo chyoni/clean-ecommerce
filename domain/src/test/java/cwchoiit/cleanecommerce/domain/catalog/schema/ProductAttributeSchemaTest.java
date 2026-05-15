@@ -124,8 +124,9 @@ class ProductAttributeSchemaTest {
     void removeDefinition() {
         assertThat(schema.getDefinitions().size()).isEqualTo(2);
 
-        schema.removeDefinition("screen_size");
+        boolean removedDefinition = schema.removeDefinition("screen_size");
 
+        assertThat(removedDefinition).isTrue();
         assertThat(schema.getDefinitions().size()).isEqualTo(1);
     }
 
