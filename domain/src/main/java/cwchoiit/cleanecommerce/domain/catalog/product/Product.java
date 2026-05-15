@@ -102,10 +102,6 @@ public class Product extends BaseEntity {
         return product;
     }
 
-    private static void validateSku(List<SkuPayload> skus) {
-        state(skus != null && !skus.isEmpty(), "상품은 최소 1개의 SKU를 가져야 합니다");
-    }
-
     public ProductSku registerSku(
             String skuCode, Map<String, Object> options, int price, int stockQuantity) {
         ProductSku sku = ProductSku.create(this, skuCode, options, price, stockQuantity);
@@ -165,6 +161,10 @@ public class Product extends BaseEntity {
     public void changeSalesEndDate(LocalDateTime salesEndDate) {
         validateSalesDate(this.salesStartDate, salesEndDate);
         this.salesEndDate = salesEndDate;
+    }
+
+    private static void validateSku(List<SkuPayload> skus) {
+        state(skus != null && !skus.isEmpty(), "상품은 최소 1개의 SKU를 가져야 합니다");
     }
 
     private static void validateSeller(Member seller) {
