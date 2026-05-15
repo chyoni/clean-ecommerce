@@ -5,11 +5,11 @@ import cwchoiit.cleanecommerce.domain.catalog.schema.AttributeType;
 import cwchoiit.cleanecommerce.domain.catalog.schema.ProductAttributeSchema;
 import java.util.List;
 
-public record ProductAttributeSchemaRegisterResponse(
+public record ProductAttributeSchemaResponse(
         Long schemaId, Long categoryId, List<AttributeDefinitionResponse> attributeDefinitions) {
 
-    public static ProductAttributeSchemaRegisterResponse from(ProductAttributeSchema schema) {
-        return new ProductAttributeSchemaRegisterResponse(
+    public static ProductAttributeSchemaResponse from(ProductAttributeSchema schema) {
+        return new ProductAttributeSchemaResponse(
                 schema.getSchemaId(),
                 schema.getCategoryId(),
                 schema.getDefinitions().stream().map(AttributeDefinitionResponse::from).toList());
