@@ -5,8 +5,10 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import cwchoiit.cleanecommerce.domain.CategoryFixture;
 import cwchoiit.cleanecommerce.domain.MemberFixture;
+import cwchoiit.cleanecommerce.domain.ProductAttributeSchemaFixture;
 import cwchoiit.cleanecommerce.domain.ProductFixture;
 import cwchoiit.cleanecommerce.domain.catalog.category.Category;
+import cwchoiit.cleanecommerce.domain.catalog.schema.ProductAttributeSchema;
 import cwchoiit.cleanecommerce.domain.member.Member;
 import cwchoiit.cleanecommerce.domain.member.MemberRegisterPayload;
 import cwchoiit.cleanecommerce.domain.member.MemberRole;
@@ -256,6 +258,15 @@ class ProductTest {
     }
 
     @Test
+    @DisplayName("상품 등록 시 SKU가 NULL이면 예외가 발생한다")
+    void registerFailSkusNull() {
+        ProductRegisterPayload payload = ProductFixture.builder().skus(null).build();
+
+        assertThatThrownBy(() -> Product.register(payload, defaultSeller, defaultCategory))
+                .isInstanceOf(IllegalStateException.class);
+    }
+
+    @Test
     @DisplayName("SKU를 등록한다")
     void registerSku() {
         Product product = ProductFixture.register();
@@ -323,5 +334,53 @@ class ProductTest {
         product.changeDescriptionHtml(html);
 
         assertThat(product.getDescriptionHtml()).isEqualTo(html);
+    }
+
+    @Test
+    @DisplayName("상품 속성을 변경한다")
+    void changeAttributes() {
+        Product product = ProductFixture.register();
+
+        Map<String, Object> attributes = Map.of("resolution", 1680);
+
+        product.changeAttributes(attributes, null);
+
+        assertThat(product.getAttributes().size()).isEqualTo(1);
+        assertThat(product.getAttributes().containsKey("resolution")).isTrue();
+    }
+
+    @Test
+    @DisplayName("상품 속성을 변경할때 해당 상품이 속한 카테고리의 스키마를 제공하면 속성 검증을 한다")
+    void changeAttributesWithSchema() {
+        Product product = ProductFixture.register();
+
+        Map<String, Object> attributes = Map.of("screen_size", 32, "storage", 156);
+
+        ProductAttributeSchema schema =
+                ProductAttributeSchemaFixture.create(product.getCategory().getCategoryId());
+
+        product.changeAttributes(attributes, schema);
+
+        assertThat(product.getAttributes().size()).isEqualTo(2);
+        assertThat(product.getAttributes().containsKey("screen_size")).isTrue();
+        assertThat(product.getAttributes().containsKey("storage")).isTrue();
+
+        assertThat(product.getAttributes().get("screen_size")).isEqualTo(32);
+        assertThat(product.getAttributes().get("storage")).isEqualTo(156);
+    }
+
+    @Test
+    @DisplayName("상품 속성을 변경할때, 해당 상품이 속한 카테고리의 스키마를 제공하면 속성 검증을 하고 검증에 통과해야만 변경이 완료된다")
+    void changeAttributeWithSchemaFail() {
+        Product product = ProductFixture.register();
+
+        Map<String, Object> attributes = Map.of("resolution", 1680);
+
+        // screen_size, storage 가 필수이며, resolution은 정의되지 않은 속성인 schema
+        ProductAttributeSchema schema =
+                ProductAttributeSchemaFixture.create(product.getCategory().getCategoryId());
+
+        assertThatThrownBy(() -> product.changeAttributes(attributes, schema))
+                .isInstanceOf(IllegalArgumentException.class);
     }
 }
