@@ -45,3 +45,6 @@ spring:
     properties:
       hibernate:
         format_sql: true
+logging:
+  level:
+    cwchoiit: debug

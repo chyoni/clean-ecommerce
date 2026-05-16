@@ -5,8 +5,8 @@ Content-Type: application/json
 {
   "imageType": "THUMBNAIL",
   "contentType": "image/png",
-  "contentLength": 69,
-  "originalFileName": "test.png"
+  "contentLength": 10362,
+  "originalFileName": "bitcoin.png"
 }
 
 > {%
@@ -18,4 +18,43 @@ Content-Type: application/json
 PUT {{uploadUrl}}
 Content-Type: image/png
 
-< ./test.png
+< ./bitcoin.png
+
+### Register Product
+POST http://localhost:8080/api/v1/products
+Content-Type: application/json
+
+{
+  "sellerId": 3,
+  "categoryId": 12,
+  "productName": "갤럭시 S25",
+  "descriptionHtml": "<p>최신 플래그십</p>",
+  "brand": "Samsung",
+  "manufacturer": "Samsung Electronics",
+  "salesStartDate": "2026-05-10T00:00:00",
+  "attributes": { "resolution": 1280, "pencil_required": false },
+  "skus": [
+    { "skuCode": "GS25-BLK-256", "options": {"color":"BLACK","storage":256}, "price": 1500000, "stockQuantity": 100 },
+    { "skuCode": "GS25-WHT-256", "options": {"color":"WHITE","storage":256}, "price": 1500000, "stockQuantity": 80 }
+  ],
+  "images": [
+    {
+      "imageType": "THUMBNAIL",
+      "imagePath": "product-images/products/thumbnail/2026/05/ff6774bc-7baa-4e08-a41a-ec94b5e3027c.png",
+      "displayOrder": 0,
+      "storageKey": "products/thumbnail/2026/05/ff6774bc-7baa-4e08-a41a-ec94b5e3027c.png",
+      "fileSize": 10362,
+      "mimeType": "image/png"
+    }
+  ]
+}
+
+### ADD Skus
+POST http://localhost:8080/api/v1/products/1/skus
+Content-Type: application/json
+
+{
+  "skus": [
+    {"skuCode": "SKU-PROD-1", "price": 100000, "stockQuantity": 200}
+  ]
+}

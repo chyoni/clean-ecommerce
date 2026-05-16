@@ -1,6 +1,6 @@
 package cwchoiit.cleanecommerce.adapter.web.product;
 
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -8,14 +8,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import cwchoiit.cleanecommerce.adapter.web.product.request.ProductAddSkuRequest;
 import cwchoiit.cleanecommerce.application.port.in.ProductRegisterUseCase;
 import cwchoiit.cleanecommerce.application.port.in.images.IssueImageUploadUrlCommand;
 import cwchoiit.cleanecommerce.application.port.in.images.IssueImageUploadUrlResult;
 import cwchoiit.cleanecommerce.application.port.in.images.IssueImageUploadUrlUseCase;
-import cwchoiit.cleanecommerce.domain.catalog.product.Product;
-import cwchoiit.cleanecommerce.domain.catalog.product.ProductImageType;
-import cwchoiit.cleanecommerce.domain.catalog.product.ProductRegisterPayload;
-import cwchoiit.cleanecommerce.domain.catalog.product.SkuPayload;
+import cwchoiit.cleanecommerce.domain.catalog.product.*;
 import java.net.URI;
 import java.time.Instant;
 import java.util.List;
@@ -194,5 +192,36 @@ class ProductControllerTest {
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(requestJson))
                 .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @DisplayName("SKU를 추가한다")
+    void addSkus() throws Exception {
+        ProductAddSkuRequest skus =
+                new ProductAddSkuRequest(
+                        List.of(
+                                new SkuPayload("SKU-001", null, 10000, 100),
+                                new SkuPayload("SKU-002", null, 10000, 100)));
+
+        long productId = 1L;
+
+        ProductSku productSku = mock(ProductSku.class);
+        when(productSku.getSkuCode()).thenReturn("SKU-001");
+
+        ProductSku productSku2 = mock(ProductSku.class);
+        when(productSku2.getSkuCode()).thenReturn("SKU-002");
+
+        when(productRegisterUseCase.addSkus(eq(productId), eq(skus.skus())))
+                .thenReturn(List.of(productSku, productSku2));
+
+        mockMvc.perform(
+                        post("/api/v1/products/{productId}/skus", productId)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(MAPPER.writeValueAsString(skus)))
+                .andDo(print())
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.productId").value(productId))
+                .andExpect(jsonPath("$.skus[0].skuCode").value("SKU-001"))
+                .andExpect(jsonPath("$.skus[1].skuCode").value("SKU-002"));
     }
 }

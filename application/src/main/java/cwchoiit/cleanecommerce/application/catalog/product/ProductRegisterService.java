@@ -8,6 +8,7 @@ import cwchoiit.cleanecommerce.application.port.out.ProductRepository;
 import cwchoiit.cleanecommerce.domain.catalog.category.Category;
 import cwchoiit.cleanecommerce.domain.catalog.product.Product;
 import cwchoiit.cleanecommerce.domain.catalog.product.ProductRegisterPayload;
+import cwchoiit.cleanecommerce.domain.catalog.product.ProductSku;
 import cwchoiit.cleanecommerce.domain.catalog.product.SkuPayload;
 import cwchoiit.cleanecommerce.domain.member.Member;
 import jakarta.validation.Valid;
@@ -48,11 +49,13 @@ public class ProductRegisterService implements ProductRegisterUseCase {
     }
 
     @Override
-    public Product addSkus(Long productId, @Valid List<SkuPayload> skus) {
+    public List<ProductSku> addSkus(Long productId, @Valid List<SkuPayload> skus) {
         Product product = productRepository.findByProductId(productId).orElseThrow();
 
-        product.registerSkus(skus);
+        List<ProductSku> updatedSkus = product.registerSkus(skus);
 
-        return productRepository.save(product);
+        productRepository.save(product);
+
+        return updatedSkus;
     }
 }
