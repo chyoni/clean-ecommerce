@@ -102,10 +102,23 @@ public class Product extends BaseEntity {
         return product;
     }
 
+    public List<ProductSku> registerSkus(List<SkuPayload> skus) {
+        validateSku(skus);
+
+        skus.forEach(
+                sku -> registerSku(sku.skuCode(), sku.options(), sku.price(), sku.stockQuantity()));
+
+        return this.skus;
+    }
+
     public ProductSku registerSku(
             String skuCode, Map<String, Object> options, int price, int stockQuantity) {
+        checkDuplicateSku(skuCode);
+
         ProductSku sku = ProductSku.create(this, skuCode, options, price, stockQuantity);
+
         skus.add(sku);
+
         return sku;
     }
 
@@ -165,6 +178,13 @@ public class Product extends BaseEntity {
 
     private static void validateSku(List<SkuPayload> skus) {
         state(skus != null && !skus.isEmpty(), "상품은 최소 1개의 SKU를 가져야 합니다");
+    }
+
+    private void checkDuplicateSku(String skuCode) {
+        if (this.skus.stream().anyMatch(s -> s.getSkuCode().equals(skuCode))) {
+            throw new IllegalArgumentException(
+                    "동일한 상품: " + this.productId + " 에 동일한 SKU Code가 존재합니다. SKU Code: " + skuCode);
+        }
     }
 
     private static void validateSeller(Member seller) {

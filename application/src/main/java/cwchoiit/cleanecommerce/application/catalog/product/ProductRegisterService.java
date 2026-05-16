@@ -8,8 +8,10 @@ import cwchoiit.cleanecommerce.application.port.out.ProductRepository;
 import cwchoiit.cleanecommerce.domain.catalog.category.Category;
 import cwchoiit.cleanecommerce.domain.catalog.product.Product;
 import cwchoiit.cleanecommerce.domain.catalog.product.ProductRegisterPayload;
+import cwchoiit.cleanecommerce.domain.catalog.product.SkuPayload;
 import cwchoiit.cleanecommerce.domain.member.Member;
 import jakarta.validation.Valid;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,5 +45,14 @@ public class ProductRegisterService implements ProductRegisterUseCase {
                 .ifPresent(schema -> schema.validate(payload.attributes()));
 
         return productRepository.save(Product.register(payload, seller, category));
+    }
+
+    @Override
+    public Product addSkus(Long productId, @Valid List<SkuPayload> skus) {
+        Product product = productRepository.findByProductId(productId).orElseThrow();
+
+        product.registerSkus(skus);
+
+        return productRepository.save(product);
     }
 }

@@ -2,10 +2,12 @@ package cwchoiit.cleanecommerce.application.port.in;
 
 import cwchoiit.cleanecommerce.domain.catalog.product.Product;
 import cwchoiit.cleanecommerce.domain.catalog.product.ProductRegisterPayload;
+import cwchoiit.cleanecommerce.domain.catalog.product.SkuPayload;
 import jakarta.validation.Valid;
+import java.util.List;
 
 public interface ProductRegisterUseCase {
     Product register(@Valid ProductRegisterPayload payload);
 
-    // TODO: Product 상태 변경 메서드 전부 UseCase에 추가
+    Product addSkus(Long productId, @Valid List<SkuPayload> skus);
 }

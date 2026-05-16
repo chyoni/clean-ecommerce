@@ -1,5 +1,6 @@
 package cwchoiit.cleanecommerce.application.port.in;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -16,7 +17,9 @@ import cwchoiit.cleanecommerce.domain.ProductAttributeSchemaFixture;
 import cwchoiit.cleanecommerce.domain.ProductFixture;
 import cwchoiit.cleanecommerce.domain.catalog.product.Product;
 import cwchoiit.cleanecommerce.domain.catalog.product.ProductRegisterPayload;
+import cwchoiit.cleanecommerce.domain.catalog.product.SkuPayload;
 import cwchoiit.cleanecommerce.domain.catalog.schema.ProductAttributeSchema;
+import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -114,5 +117,57 @@ class ProductRegisterUseCaseTest {
         productRegisterUseCase.register(payload);
 
         verify(productRepository, times(1)).save(any(Product.class));
+    }
+
+    @Test
+    @DisplayName("상품에 SKU를 추가한다")
+    void addSkus() {
+        Product product = ProductFixture.register();
+        long productId = 1L;
+
+        when(productRepository.findByProductId(eq(productId))).thenReturn(Optional.of(product));
+
+        List<SkuPayload> skus =
+                List.of(
+                        new SkuPayload("SKU-001", null, 10_000, 100),
+                        new SkuPayload("SKU-002", null, 10_000, 100));
+
+        productRegisterUseCase.addSkus(productId, skus);
+
+        assertThat(product.getSkus().size()).isEqualTo(3);
+
+        verify(productRepository, times(1)).save(eq(product));
+    }
+
+    @Test
+    @DisplayName("상품에 SKU를 추가하려고 할 때, 상품을 찾지 못하면 오류가 발생한다")
+    void addSkusFailNotFound() {
+        long productId = 1L;
+        when(productRepository.findByProductId(eq(productId))).thenReturn(Optional.empty());
+
+        List<SkuPayload> skus =
+                List.of(
+                        new SkuPayload("SKU-001", null, 10_000, 100),
+                        new SkuPayload("SKU-002", null, 10_000, 100));
+
+        assertThatThrownBy(() -> productRegisterUseCase.addSkus(productId, skus))
+                .isInstanceOf(NoSuchElementException.class);
+    }
+
+    @Test
+    @DisplayName("상품에 SKU를 추가하려고 할 때, 같은 SKU Code를 여러번 추가하려고 하면 중복 오류가 발생한다")
+    void addSkuFailDuplicateSkuCode() {
+        Product product = ProductFixture.register();
+        long productId = 1L;
+
+        when(productRepository.findByProductId(eq(productId))).thenReturn(Optional.of(product));
+
+        List<SkuPayload> skus =
+                List.of(
+                        new SkuPayload("SKU-001", null, 10_000, 100),
+                        new SkuPayload("SKU-001", null, 10_000, 100));
+
+        assertThatThrownBy(() -> productRegisterUseCase.addSkus(productId, skus))
+                .isInstanceOf(IllegalArgumentException.class);
     }
 }

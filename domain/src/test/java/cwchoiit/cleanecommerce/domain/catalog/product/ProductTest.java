@@ -278,6 +278,44 @@ class ProductTest {
     }
 
     @Test
+    @DisplayName("SKU를 여러개 등록한다")
+    void registerSkus() {
+        Product product = ProductFixture.register();
+
+        List<SkuPayload> skus =
+                List.of(
+                        new SkuPayload("SKU-NEW", null, 1_500_000, 100),
+                        new SkuPayload("SKU-NEW-2", null, 1_100_000, 200));
+
+        List<ProductSku> productSkus = product.registerSkus(skus);
+
+        assertThat(productSkus.size()).isEqualTo(3);
+    }
+
+    @Test
+    @DisplayName("SKU를 여러개 등록할 때, 같은 SkuCode값이 있으면 중복 오류가 발생한다")
+    void registerSkusFailDuplicate() {
+        Product product = ProductFixture.register();
+
+        List<SkuPayload> skus =
+                List.of(
+                        new SkuPayload("SKU-NEW", null, 1_500_000, 100),
+                        new SkuPayload("SKU-NEW", null, 1_100_000, 200));
+
+        assertThatThrownBy(() -> product.registerSkus(skus))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    @DisplayName("SKU를 여러개 등록하려고 할 때, SKU가 빈 값이면 오류가 발생한다")
+    void registerSkusFail() {
+        Product product = ProductFixture.register();
+
+        assertThatThrownBy(() -> product.registerSkus(List.of()))
+                .isInstanceOf(IllegalStateException.class);
+    }
+
+    @Test
     @DisplayName("SKU를 제거한다")
     void removeSku() {
         Product product = ProductFixture.register();
