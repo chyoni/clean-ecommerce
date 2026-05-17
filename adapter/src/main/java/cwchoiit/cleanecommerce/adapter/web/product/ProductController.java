@@ -44,8 +44,7 @@ public class ProductController {
     @PostMapping("/{productId}/skus")
     @ResponseStatus(HttpStatus.CREATED)
     public ProductSkusResponse addSkus(
-            @PathVariable("productId") Long productId,
-            @RequestBody @Valid ProductAddSkuRequest request) {
+            @PathVariable Long productId, @RequestBody @Valid ProductAddSkuRequest request) {
         List<ProductSku> productSkus = productRegisterUseCase.addSkus(productId, request.skus());
         return ProductSkusResponse.from(productId, productSkus);
     }

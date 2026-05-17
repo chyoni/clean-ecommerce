@@ -50,7 +50,7 @@ public class ProductRegisterService implements ProductRegisterUseCase {
 
     @Override
     public List<ProductSku> addSkus(Long productId, @Valid List<SkuPayload> skus) {
-        Product product = productRepository.findByProductId(productId).orElseThrow();
+        Product product = productRepository.findByProductIdWithSkus(productId).orElseThrow();
 
         List<ProductSku> updatedSkus = product.registerSkus(skus);
 
