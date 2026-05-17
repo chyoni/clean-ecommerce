@@ -17,6 +17,7 @@ import lombok.ToString;
 @ToString(exclude = "product")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ProductSku extends BaseEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long skuId;

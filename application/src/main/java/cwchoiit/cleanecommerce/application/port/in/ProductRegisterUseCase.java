@@ -11,4 +11,6 @@ public interface ProductRegisterUseCase {
     Product register(@Valid ProductRegisterPayload payload);
 
     List<ProductSku> addSkus(Long productId, @Valid List<SkuPayload> skus);
+
+    List<ProductSku> removeSku(Long productId, String skuCode);
 }

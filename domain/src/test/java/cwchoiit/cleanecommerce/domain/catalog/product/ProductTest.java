@@ -321,7 +321,7 @@ class ProductTest {
         Product product = ProductFixture.register();
         ProductSku sku = product.registerSku("SKU-NEW", null, 1_500_000, 100);
 
-        product.removeSku(sku);
+        product.removeSku(sku.getSkuCode());
 
         assertThat(product.getSkus()).hasSize(1); // fixture default SKU만 남음
     }

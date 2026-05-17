@@ -10,7 +10,8 @@ public interface ProductRepository extends Repository<Product, Long> {
 
     Optional<Product> findByProductId(Long productId);
 
-    @Query("""
+    @Query(
+            """
         SELECT DISTINCT p
         FROM Product p
         LEFT JOIN FETCH p.skus

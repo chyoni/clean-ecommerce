@@ -58,4 +58,15 @@ public class ProductRegisterService implements ProductRegisterUseCase {
 
         return updatedSkus;
     }
+
+    @Override
+    public List<ProductSku> removeSku(Long productId, String skuCode) {
+        Product product = productRepository.findByProductId(productId).orElseThrow();
+
+        product.removeSku(skuCode);
+
+        productRepository.save(product);
+
+        return product.getSkus();
+    }
 }

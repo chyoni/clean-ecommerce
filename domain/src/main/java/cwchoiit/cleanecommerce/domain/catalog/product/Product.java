@@ -122,8 +122,16 @@ public class Product extends BaseEntity {
         return sku;
     }
 
-    public void removeSku(ProductSku sku) {
-        skus.remove(requireNonNull(sku));
+    public void removeSku(String skuCode) {
+        requireNonNull(skuCode);
+
+        ProductSku sku =
+                this.skus.stream()
+                        .filter(s -> s.getSkuCode().equals(skuCode))
+                        .findFirst()
+                        .orElse(null);
+
+        skus.remove(sku);
     }
 
     public ProductImage addImage(

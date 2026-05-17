@@ -17,6 +17,7 @@ import cwchoiit.cleanecommerce.domain.ProductAttributeSchemaFixture;
 import cwchoiit.cleanecommerce.domain.ProductFixture;
 import cwchoiit.cleanecommerce.domain.catalog.product.Product;
 import cwchoiit.cleanecommerce.domain.catalog.product.ProductRegisterPayload;
+import cwchoiit.cleanecommerce.domain.catalog.product.ProductSku;
 import cwchoiit.cleanecommerce.domain.catalog.product.SkuPayload;
 import cwchoiit.cleanecommerce.domain.catalog.schema.ProductAttributeSchema;
 import java.util.List;
@@ -125,7 +126,8 @@ class ProductRegisterUseCaseTest {
         Product product = ProductFixture.register();
         long productId = 1L;
 
-        when(productRepository.findByProductId(eq(productId))).thenReturn(Optional.of(product));
+        when(productRepository.findByProductIdWithSkus(eq(productId)))
+                .thenReturn(Optional.of(product));
 
         List<SkuPayload> skus =
                 List.of(
@@ -143,7 +145,7 @@ class ProductRegisterUseCaseTest {
     @DisplayName("상품에 SKU를 추가하려고 할 때, 상품을 찾지 못하면 오류가 발생한다")
     void addSkusFailNotFound() {
         long productId = 1L;
-        when(productRepository.findByProductId(eq(productId))).thenReturn(Optional.empty());
+        when(productRepository.findByProductIdWithSkus(eq(productId))).thenReturn(Optional.empty());
 
         List<SkuPayload> skus =
                 List.of(
@@ -160,7 +162,8 @@ class ProductRegisterUseCaseTest {
         Product product = ProductFixture.register();
         long productId = 1L;
 
-        when(productRepository.findByProductId(eq(productId))).thenReturn(Optional.of(product));
+        when(productRepository.findByProductIdWithSkus(eq(productId)))
+                .thenReturn(Optional.of(product));
 
         List<SkuPayload> skus =
                 List.of(
@@ -169,5 +172,46 @@ class ProductRegisterUseCaseTest {
 
         assertThatThrownBy(() -> productRegisterUseCase.addSkus(productId, skus))
                 .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    @DisplayName("상품에 SKU를 삭제한다")
+    void removeSku() {
+        Product product = ProductFixture.register();
+        assertThat(product.getSkus()).hasSize(1);
+
+        long productId = 1L;
+
+        when(productRepository.findByProductId(eq(productId))).thenReturn(Optional.of(product));
+
+        List<ProductSku> productSkus = productRegisterUseCase.removeSku(productId, "DEFAULT-SKU");
+
+        assertThat(productSkus.size()).isEqualTo(0);
+    }
+
+    @Test
+    @DisplayName("상품에 SKU를 삭제하려할때 없는 상품으로 시도하는 경우 오류가 발생한다")
+    void removeSkuFailEmptyProduct() {
+        long productId = 1L;
+
+        when(productRepository.findByProductId(eq(productId))).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> productRegisterUseCase.removeSku(productId, "DEFAULT-SKU"))
+                .isInstanceOf(NoSuchElementException.class);
+    }
+
+    @Test
+    @DisplayName("상품에 SKU를 삭제할 때 없는 SkuCode로 삭제하려고 하면 아무것도 삭제하지 않는다")
+    void removeSkuFailDoesNotExist() {
+        Product product = ProductFixture.register();
+        assertThat(product.getSkus()).hasSize(1);
+
+        long productId = 1L;
+
+        when(productRepository.findByProductId(eq(productId))).thenReturn(Optional.of(product));
+
+        List<ProductSku> productSkus = productRegisterUseCase.removeSku(productId, "UNKNOWN-SKU");
+
+        assertThat(productSkus.size()).isEqualTo(1);
     }
 }
