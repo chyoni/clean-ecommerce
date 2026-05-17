@@ -11,7 +11,8 @@ public record ProductSkusResponse(Long productId, List<ProductSkuResponse> skus)
             Long skuId,
             Integer price,
             Integer stockQuantity,
-            Map<String, Object> options) {}
+            Map<String, Object> options,
+            boolean active) {}
 
     public static ProductSkusResponse from(Long productId, List<ProductSku> skus) {
         List<ProductSkuResponse> list =
@@ -23,7 +24,8 @@ public record ProductSkusResponse(Long productId, List<ProductSkuResponse> skus)
                                                 sku.getSkuId(),
                                                 sku.getPrice(),
                                                 sku.getStockQuantity(),
-                                                sku.getOptions()))
+                                                sku.getOptions(),
+                                                sku.isActive()))
                         .toList();
 
         return new ProductSkusResponse(productId, list);

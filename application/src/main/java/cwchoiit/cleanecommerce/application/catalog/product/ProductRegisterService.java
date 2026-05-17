@@ -60,10 +60,10 @@ public class ProductRegisterService implements ProductRegisterUseCase {
     }
 
     @Override
-    public List<ProductSku> removeSku(Long productId, String skuCode) {
-        Product product = productRepository.findByProductId(productId).orElseThrow();
+    public List<ProductSku> deactivateSku(Long productId, String skuCode) {
+        Product product = productRepository.findByProductIdWithSkus(productId).orElseThrow();
 
-        product.removeSku(skuCode);
+        product.deactivateSku(skuCode);
 
         productRepository.save(product);
 

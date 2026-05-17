@@ -317,13 +317,18 @@ class ProductTest {
 
     @Test
     @DisplayName("SKU를 제거한다")
-    void removeSku() {
+    void deactivateSku() {
         Product product = ProductFixture.register();
         ProductSku sku = product.registerSku("SKU-NEW", null, 1_500_000, 100);
 
-        product.removeSku(sku.getSkuCode());
+        product.deactivateSku(sku.getSkuCode());
 
-        assertThat(product.getSkus()).hasSize(1); // fixture default SKU만 남음
+        ProductSku deactivatedSku =
+                product.getSkus().stream()
+                        .filter(s -> s.getSkuCode().equals("SKU-NEW"))
+                        .findFirst()
+                        .orElseThrow();
+        assertThat(deactivatedSku.isActive()).isFalse();
     }
 
     @Test

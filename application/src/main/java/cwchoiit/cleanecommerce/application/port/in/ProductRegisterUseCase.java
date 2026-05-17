@@ -12,5 +12,5 @@ public interface ProductRegisterUseCase {
 
     List<ProductSku> addSkus(Long productId, @Valid List<SkuPayload> skus);
 
-    List<ProductSku> removeSku(Long productId, String skuCode);
+    List<ProductSku> deactivateSku(Long productId, String skuCode);
 }

@@ -1,14 +1,15 @@
 package cwchoiit.cleanecommerce.adapter.web.product;
 
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import cwchoiit.cleanecommerce.adapter.web.product.request.ProductAddSkuRequest;
+import cwchoiit.cleanecommerce.adapter.web.product.request.ProductDeactivateSkuRequest;
 import cwchoiit.cleanecommerce.application.port.in.ProductRegisterUseCase;
 import cwchoiit.cleanecommerce.application.port.in.images.IssueImageUploadUrlCommand;
 import cwchoiit.cleanecommerce.application.port.in.images.IssueImageUploadUrlResult;
@@ -223,5 +224,32 @@ class ProductControllerTest {
                 .andExpect(jsonPath("$.productId").value(productId))
                 .andExpect(jsonPath("$.skus[0].skuCode").value("SKU-001"))
                 .andExpect(jsonPath("$.skus[1].skuCode").value("SKU-002"));
+    }
+
+    @Test
+    @DisplayName("SKU를 삭제한다")
+    void deactivateSku() throws Exception {
+        long productId = 1L;
+        String skuCode = "SKU-001";
+
+        ProductSku productSku = mock(ProductSku.class);
+        when(productSku.getSkuCode()).thenReturn("SKU-002");
+
+        when(productRegisterUseCase.deactivateSku(eq(productId), eq(skuCode)))
+                .thenReturn(List.of(productSku));
+
+        mockMvc.perform(
+                        delete("/api/v1/products/{productId}/skus", productId)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(
+                                        MAPPER.writeValueAsString(
+                                                new ProductDeactivateSkuRequest(skuCode))))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.productId").value(productId))
+                .andExpect(jsonPath("$.skus.size()").value(1))
+                .andExpect(jsonPath("$.skus[0].skuCode").value("SKU-002"));
+
+        verify(productRegisterUseCase, times(1)).deactivateSku(eq(productId), eq(skuCode));
     }
 }

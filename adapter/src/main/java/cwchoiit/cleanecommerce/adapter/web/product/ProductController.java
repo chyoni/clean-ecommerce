@@ -1,6 +1,7 @@
 package cwchoiit.cleanecommerce.adapter.web.product;
 
 import cwchoiit.cleanecommerce.adapter.web.product.request.ProductAddSkuRequest;
+import cwchoiit.cleanecommerce.adapter.web.product.request.ProductDeactivateSkuRequest;
 import cwchoiit.cleanecommerce.adapter.web.product.response.IssueImageUploadUrlResponse;
 import cwchoiit.cleanecommerce.adapter.web.product.response.ProductRegisterResponse;
 import cwchoiit.cleanecommerce.adapter.web.product.response.ProductSkusResponse;
@@ -47,5 +48,14 @@ public class ProductController {
             @PathVariable Long productId, @RequestBody @Valid ProductAddSkuRequest request) {
         List<ProductSku> productSkus = productRegisterUseCase.addSkus(productId, request.skus());
         return ProductSkusResponse.from(productId, productSkus);
+    }
+
+    @DeleteMapping("/{productId}/skus")
+    @ResponseStatus(HttpStatus.OK)
+    public ProductSkusResponse deactivateSku(
+            @PathVariable Long productId, @RequestBody @Valid ProductDeactivateSkuRequest request) {
+        List<ProductSku> updatedSkus =
+                productRegisterUseCase.deactivateSku(productId, request.skuCode());
+        return ProductSkusResponse.from(productId, updatedSkus);
     }
 }

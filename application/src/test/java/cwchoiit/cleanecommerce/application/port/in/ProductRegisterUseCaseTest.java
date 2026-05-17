@@ -176,41 +176,47 @@ class ProductRegisterUseCaseTest {
 
     @Test
     @DisplayName("상품에 SKU를 삭제한다")
-    void removeSku() {
+    void deactivateSku() {
         Product product = ProductFixture.register();
         assertThat(product.getSkus()).hasSize(1);
+        assertThat(product.getSkus().getFirst().isActive()).isTrue();
 
         long productId = 1L;
 
-        when(productRepository.findByProductId(eq(productId))).thenReturn(Optional.of(product));
+        when(productRepository.findByProductIdWithSkus(eq(productId)))
+                .thenReturn(Optional.of(product));
 
-        List<ProductSku> productSkus = productRegisterUseCase.removeSku(productId, "DEFAULT-SKU");
+        List<ProductSku> productSkus =
+                productRegisterUseCase.deactivateSku(productId, "DEFAULT-SKU");
 
-        assertThat(productSkus.size()).isEqualTo(0);
+        assertThat(productSkus.size()).isEqualTo(1);
+        assertThat(productSkus.getFirst().isActive()).isFalse();
     }
 
     @Test
     @DisplayName("상품에 SKU를 삭제하려할때 없는 상품으로 시도하는 경우 오류가 발생한다")
-    void removeSkuFailEmptyProduct() {
+    void deactivateSkuFailEmptyProduct() {
         long productId = 1L;
 
-        when(productRepository.findByProductId(eq(productId))).thenReturn(Optional.empty());
+        when(productRepository.findByProductIdWithSkus(eq(productId))).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> productRegisterUseCase.removeSku(productId, "DEFAULT-SKU"))
+        assertThatThrownBy(() -> productRegisterUseCase.deactivateSku(productId, "DEFAULT-SKU"))
                 .isInstanceOf(NoSuchElementException.class);
     }
 
     @Test
     @DisplayName("상품에 SKU를 삭제할 때 없는 SkuCode로 삭제하려고 하면 아무것도 삭제하지 않는다")
-    void removeSkuFailDoesNotExist() {
+    void deactivateSkuFailDoesNotExist() {
         Product product = ProductFixture.register();
         assertThat(product.getSkus()).hasSize(1);
 
         long productId = 1L;
 
-        when(productRepository.findByProductId(eq(productId))).thenReturn(Optional.of(product));
+        when(productRepository.findByProductIdWithSkus(eq(productId)))
+                .thenReturn(Optional.of(product));
 
-        List<ProductSku> productSkus = productRegisterUseCase.removeSku(productId, "UNKNOWN-SKU");
+        List<ProductSku> productSkus =
+                productRegisterUseCase.deactivateSku(productId, "UNKNOWN-SKU");
 
         assertThat(productSkus.size()).isEqualTo(1);
     }
